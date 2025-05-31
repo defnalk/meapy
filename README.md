@@ -12,7 +12,7 @@ meapy provides a clean, tested, and typed API for the core calculations performe
 
 ---
 
-## ✨ Features
+## Features
 
 | Module | What it does |
 |---|---|
@@ -30,7 +30,7 @@ meapy provides a clean, tested, and typed API for the core calculations performe
 
 ---
 
-## 🏗 Background
+##  Background
 
 meapy was developed from the Imperial College London MEA carbon-capture pilot-plant analysis (Hale, 2025). The plant operates a 15 % (w/w) MEA solution in a counter-current packed absorber (E101) and stripper (E100), with plate heat exchangers C100 (intercooler) and C200 (trim cooler), and pump J100 driving lean MEA recirculation.
 
@@ -56,7 +56,7 @@ meapy was developed from the Imperial College London MEA carbon-capture pilot-pl
 
 ---
 
-## 📦 Installation
+##  Installation
 
 **From PyPI** (once published):
 
@@ -76,7 +76,7 @@ pip install -e ".[dev]"
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Heat Exchanger Analysis (C100 intercooler)
 
@@ -161,7 +161,7 @@ print(f"Range      = [{stats['min']:.1f}, {stats['max']:.1f}] kmol/(m³·h)")
 
 ## 📖 API Reference
 
-### `meapy.heat_transfer`
+### meapy.heat_transfer`
 
 | Function | Signature | Returns |
 |---|---|---|
@@ -175,7 +175,7 @@ print(f"Range      = [{stats['min']:.1f}, {stats['max']:.1f}] kmol/(m³·h)")
 | `ntu` | `(u_w_m2_k, area_m2, c_min_w_k)` | `float` |
 | `analyse_exchanger` | `(**kwargs)` | `dict[str, float]` |
 
-### `meapy.mass_transfer`
+### meapy.mass_transfer`
 
 | Function | Returns |
 |---|---|
@@ -203,7 +203,7 @@ Full API documentation: [meapy.readthedocs.io](https://meapy.readthedocs.io)
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
 ```bash
 # All tests with coverage report
@@ -221,7 +221,7 @@ pytest -v --tb=short
 
 ---
 
-## 🔧 Development
+##  Development
 
 ```bash
 # Install in editable mode with all dev extras
@@ -240,7 +240,7 @@ python examples/pump_commissioning.py
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 meapy/
@@ -274,7 +274,7 @@ meapy/
 
 ---
 
-## 📚 References
+## References
 
 - DOW Chemical (2003). *MEA product data and thermophysical properties.*
 - Engineering Toolbox (2003). *Overall heat transfer coefficients for plate heat exchangers.*
@@ -284,7 +284,7 @@ meapy/
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
