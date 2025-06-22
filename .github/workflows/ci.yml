@@ -71,7 +71,7 @@ jobs:
 
       - name: Run integration tests
         shell: bash
-        run: pytest tests/integration/ -v -m integration
+        run: pytest tests/integration/ -v -m integration --no-cov
 
       - name: Upload coverage report
         if: matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
