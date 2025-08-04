@@ -25,7 +25,7 @@ from meapy.mass_transfer import (
 
 class TestMoleFractionConversions:
     @pytest.mark.parametrize(
-        "y,expected_Y",
+        "y,expected_y_ratio",
         [
             (0.0, 0.0),
             (0.5, 1.0),
@@ -37,7 +37,7 @@ class TestMoleFractionConversions:
         assert mole_fraction_to_ratio(y) == pytest.approx(expected_y_ratio, rel=1e-6)
 
     @pytest.mark.parametrize(
-        "Y,expected_y",
+        "y_ratio,expected_y",
         [
             (0.0, 0.0),
             (1.0, 0.5),
