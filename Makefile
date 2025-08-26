@@ -48,3 +48,6 @@ docs:  ## Build Sphinx documentation (requires docs extras)
 examples:  ## Run all example scripts
 	$(PYTHON) examples/heat_exchanger_analysis.py
 	$(PYTHON) examples/pump_commissioning.py
+
+typecheck:
+	python -m mypy src/

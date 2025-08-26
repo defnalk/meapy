@@ -125,3 +125,7 @@ strict          = true
 ignore_missing_imports = true
 warn_return_any = true
 files           = ["src/meapy"]
+
+[[tool.mypy.overrides]]
+module = ["scipy.*"]
+ignore_missing_imports = true

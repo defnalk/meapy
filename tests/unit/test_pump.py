@@ -90,7 +90,7 @@ class TestFitExponentialLevelModel:
     def test_predictions_reasonable(self, commissioning_speeds, commissioning_levels):
         model = fit_exponential_level_model(commissioning_speeds, commissioning_levels)
         # Check interior points (exclude extremes where extrapolation is poorest)
-        for ps, lev in zip(commissioning_speeds[1:-1], commissioning_levels[1:-1]):
+        for ps, lev in zip(commissioning_speeds[1:-1], commissioning_levels[1:-1], strict=False):
             predicted = model.predict(ps)
             assert abs(predicted - lev) / lev < 0.30  # within 30 % for noisy data
 
