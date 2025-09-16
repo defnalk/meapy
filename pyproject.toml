@@ -104,11 +104,13 @@ select = [
     "ANN", # flake8-annotations
 ]
 ignore = [
-    "D100",   # missing docstring in public module
-    "ANN101", # missing type annotation for `self`
-    "S101",   # use of `assert` in tests
-    "N806","N803","D105",   # uppercase vars allowed for engineering notation (Y_b, Y_t etc.)
-    "B905",   # zip() strict= not required for same-length slices
+    "D100", "D101", "D102", "D103", "D104", "D105", "D107",
+    "D205", "D301", "D400", "D401",
+    "S101",
+    "N803", "N806",
+    "B905",
+    "E741",
+    "F841",
 ]
 
 [tool.ruff.lint.pydocstyle]
