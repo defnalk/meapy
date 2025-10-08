@@ -120,5 +120,6 @@ convention = "google"
 [tool.mypy]
 python_version  = "3.10"
 strict          = true
+ignore_missing_imports = true
 warn_return_any = true
 files           = ["src/meapy"]
