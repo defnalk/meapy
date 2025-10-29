@@ -107,7 +107,7 @@ ignore = [
     "D100",   # missing docstring in public module
     "ANN101", # missing type annotation for `self`
     "S101",   # use of `assert` in tests
-    "N806",   # uppercase vars allowed for engineering notation (Y_b, Y_t etc.)
+    "N806","N803","D105",   # uppercase vars allowed for engineering notation (Y_b, Y_t etc.)
     "B905",   # zip() strict= not required for same-length slices
 ]
 
