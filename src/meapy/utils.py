@@ -37,8 +37,7 @@ def steady_state_mean(
     window: int = 3,
     tol: float = 1.0,
 ) -> float:
-    """Return the mean of the trailing *window* values if they satisfy a
-    steady-state criterion.
+    """Return the mean of the trailing *window* values if they satisfy a steady-state criterion.
 
     A reading window is considered steady-state when the peak-to-peak
     variation within the window is ≤ *tol*.

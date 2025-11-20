@@ -33,8 +33,8 @@ class TestMoleFractionConversions:
             (0.14, 0.14 / 0.86),
         ],
     )
-    def test_fraction_to_ratio(self, y, expected_Y):
-        assert mole_fraction_to_ratio(y) == pytest.approx(expected_Y, rel=1e-6)
+    def test_fraction_to_ratio(self, y, expected_y_ratio):
+        assert mole_fraction_to_ratio(y) == pytest.approx(expected_y_ratio, rel=1e-6)
 
     @pytest.mark.parametrize(
         "Y,expected_y",
@@ -44,8 +44,8 @@ class TestMoleFractionConversions:
             (0.1 / 0.9, 0.1),
         ],
     )
-    def test_ratio_to_fraction(self, Y, expected_y):
-        assert mole_ratio_to_fraction(Y) == pytest.approx(expected_y, rel=1e-6)
+    def test_ratio_to_fraction(self, y_ratio, expected_y):
+        assert mole_ratio_to_fraction(y_ratio) == pytest.approx(expected_y, rel=1e-6)
 
     def test_round_trip(self):
         for y in [0.01, 0.05, 0.10, 0.15, 0.20]:
