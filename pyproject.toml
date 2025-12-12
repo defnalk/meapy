@@ -1,9 +1,7 @@
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
-[tool.ruff.lint]
-select = ["E", "F", "I", "W", "UP", "B", "SIM"]
-ignore = ["N806"]  # allow uppercase vars for engineering notation (Y_b, Y_t, etc.)
+
 [project]
 name = "meapy"
 version = "0.1.0"
@@ -70,9 +68,6 @@ where = ["src"]
 [tool.setuptools.package-data]
 meapy = ["py.typed"]
 
-# ---------------------------------------------------------------------------
-# pytest
-# ---------------------------------------------------------------------------
 [tool.pytest.ini_options]
 testpaths   = ["tests"]
 addopts     = "-v --cov=meapy --cov-report=term-missing --cov-fail-under=90"
@@ -81,9 +76,6 @@ markers     = [
     "slow: marks tests as slow",
 ]
 
-# ---------------------------------------------------------------------------
-# Coverage
-# ---------------------------------------------------------------------------
 [tool.coverage.run]
 source  = ["src/meapy"]
 branch  = true
@@ -93,9 +85,6 @@ omit    = ["*/tests/*", "*/__main__.py"]
 show_missing = true
 skip_empty   = true
 
-# ---------------------------------------------------------------------------
-# Ruff (linter + formatter)
-# ---------------------------------------------------------------------------
 [tool.ruff]
 line-length    = 100
 target-version = "py310"
@@ -115,9 +104,11 @@ select = [
     "ANN", # flake8-annotations
 ]
 ignore = [
-    "D100",   # missing docstring in public module (covered by __init__.py)
+    "D100",   # missing docstring in public module
     "ANN101", # missing type annotation for `self`
-    "S101",   # use of `assert` (acceptable in tests)
+    "S101",   # use of `assert` in tests
+    "N806",   # uppercase vars allowed for engineering notation (Y_b, Y_t etc.)
+    "B905",   # zip() strict= not required for same-length slices
 ]
 
 [tool.ruff.lint.pydocstyle]
@@ -126,9 +117,6 @@ convention = "google"
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["ANN", "D", "S"]
 
-# ---------------------------------------------------------------------------
-# mypy
-# ---------------------------------------------------------------------------
 [tool.mypy]
 python_version  = "3.10"
 strict          = true
