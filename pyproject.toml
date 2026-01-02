@@ -1,7 +1,9 @@
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
-
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "SIM"]
+ignore = ["N806"]  # allow uppercase vars for engineering notation (Y_b, Y_t, etc.)
 [project]
 name = "meapy"
 version = "0.1.0"
