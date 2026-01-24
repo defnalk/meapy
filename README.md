@@ -8,7 +8,7 @@
 
 > **A scientific Python library for analysing post-combustion CO₂ capture processes based on monoethanolamine (MEA) absorption.**
 
-meapy provides a clean, tested, and typed API for the core calculations performed when commissioning and evaluating MEA-based carbon capture pilot plants — heat exchanger thermal analysis, packed-column mass transfer, and pump commissioning — styled after scientific packages like [pvlib](https://pvlib-python.readthedocs.io/) and [scipy](https://scipy.org/).
+meapy provides a clean, tested, and typed API for the core calculations performed when commissioning and evaluating MEA-based carbon capture pilot plants , heat exchanger thermal analysis, packed-column mass transfer, and pump commissioning , styled after scientific packages like [pvlib](https://pvlib-python.readthedocs.io/) and [scipy](https://scipy.org/).
 
 ---
 
@@ -26,7 +26,7 @@ meapy provides a clean, tested, and typed API for the core calculations performe
 - **Google-style docstrings** on every public function and class
 - **≥ 90 % test coverage** across unit and integration suites
 - **No magic numbers** — every hard-coded value lives in `constants.py` with a source citation
-- **Logging, not print** — configure output with standard `logging`
+- **Logging, not print** - configure output with standard `logging`
 
 ---
 
