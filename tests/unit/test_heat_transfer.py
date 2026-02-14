@@ -14,11 +14,9 @@ from meapy.heat_transfer import (
     heat_capacity_rate,
     lmtd_co_current,
     lmtd_counter_current,
-    ntu,
     overall_heat_transfer_coefficient,
     stream_duty,
 )
-
 
 # ---------------------------------------------------------------------------
 # stream_duty
@@ -156,7 +154,6 @@ class TestEfficiency:
 
 class TestEffectiveness:
     def test_value_between_zero_and_one(self, c100_inputs):
-        from meapy.heat_transfer import heat_capacity_rate
 
         mea_kg_s = c100_inputs["mea_flow_kg_h"] / 3600
         util_kg_s = c100_inputs["utility_flow_kg_h"] / 3600
@@ -180,8 +177,15 @@ class TestAnalyseExchanger:
     def test_returns_expected_keys(self, c100_inputs):
         result = analyse_exchanger(**c100_inputs)
         expected_keys = {
-            "q_hot_w", "q_cold_w", "q_loss_w", "lmtd_k",
-            "u_w_m2_k", "u_kw_m2_k", "efficiency", "effectiveness", "ntu",
+            "q_hot_w",
+            "q_cold_w",
+            "q_loss_w",
+            "lmtd_k",
+            "u_w_m2_k",
+            "u_kw_m2_k",
+            "efficiency",
+            "effectiveness",
+            "ntu",
         }
         assert expected_keys == set(result.keys())
 

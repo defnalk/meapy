@@ -18,27 +18,32 @@ from meapy.mass_transfer import (
     ntu_og,
 )
 
-
 # ---------------------------------------------------------------------------
 # Mole fraction / ratio conversions
 # ---------------------------------------------------------------------------
 
 
 class TestMoleFractionConversions:
-    @pytest.mark.parametrize("y,expected_Y", [
-        (0.0, 0.0),
-        (0.5, 1.0),
-        (0.1, 0.1 / 0.9),
-        (0.14, 0.14 / 0.86),
-    ])
+    @pytest.mark.parametrize(
+        "y,expected_Y",
+        [
+            (0.0, 0.0),
+            (0.5, 1.0),
+            (0.1, 0.1 / 0.9),
+            (0.14, 0.14 / 0.86),
+        ],
+    )
     def test_fraction_to_ratio(self, y, expected_Y):
         assert mole_fraction_to_ratio(y) == pytest.approx(expected_Y, rel=1e-6)
 
-    @pytest.mark.parametrize("Y,expected_y", [
-        (0.0, 0.0),
-        (1.0, 0.5),
-        (0.1 / 0.9, 0.1),
-    ])
+    @pytest.mark.parametrize(
+        "Y,expected_y",
+        [
+            (0.0, 0.0),
+            (1.0, 0.5),
+            (0.1 / 0.9, 0.1),
+        ],
+    )
     def test_ratio_to_fraction(self, Y, expected_y):
         assert mole_ratio_to_fraction(Y) == pytest.approx(expected_y, rel=1e-6)
 
@@ -84,20 +89,26 @@ class TestKOGaFromFlux:
         k2 = koga_from_flux(0.012, 7.854e-3, 2.0, 0.14, 0.02)
         assert k1 > k2
 
-    @pytest.mark.parametrize("y_bot,y_top", [
-        (0.02, 0.14),   # reversed — y_top > y_bottom
-        (0.05, 0.05),   # equal — no absorption
-    ])
+    @pytest.mark.parametrize(
+        "y_bot,y_top",
+        [
+            (0.02, 0.14),  # reversed — y_top > y_bottom
+            (0.05, 0.05),  # equal — no absorption
+        ],
+    )
     def test_no_absorption_raises(self, y_bot, y_top):
         with pytest.raises(ValueError):
             koga_from_flux(0.012, 7.854e-3, 1.0, y_bot, y_top)
 
-    @pytest.mark.parametrize("flow,area,height", [
-        (0.0, 7.854e-3, 1.0),
-        (-0.01, 7.854e-3, 1.0),
-        (0.012, 0.0, 1.0),
-        (0.012, 7.854e-3, 0.0),
-    ])
+    @pytest.mark.parametrize(
+        "flow,area,height",
+        [
+            (0.0, 7.854e-3, 1.0),
+            (-0.01, 7.854e-3, 1.0),
+            (0.012, 0.0, 1.0),
+            (0.012, 7.854e-3, 0.0),
+        ],
+    )
     def test_nonpositive_geometry_raises(self, flow, area, height):
         with pytest.raises(ValueError):
             koga_from_flux(flow, area, height, 0.14, 0.02)
@@ -191,7 +202,7 @@ class TestNTUOG:
 class TestHOG:
     def test_units_consistent(self):
         koga = 12.0  # mol/(m³·s)
-        flux = 1.5   # mol/(m²·s)
+        flux = 1.5  # mol/(m²·s)
         assert hog(koga, flux) == pytest.approx(flux / koga)
 
     def test_zero_koga_raises(self):
@@ -209,11 +220,14 @@ class TestAbsorptionFactor:
         a = absorption_factor(liquid_flow_mol_s=0.10, gas_flow_mol_s=0.02, m_slope=2.0)
         assert a > 1.0
 
-    @pytest.mark.parametrize("liq,gas,m", [
-        (0.0, 0.02, 2.0),
-        (0.10, 0.0, 2.0),
-        (0.10, 0.02, 0.0),
-    ])
+    @pytest.mark.parametrize(
+        "liq,gas,m",
+        [
+            (0.0, 0.02, 2.0),
+            (0.10, 0.0, 2.0),
+            (0.10, 0.02, 0.0),
+        ],
+    )
     def test_nonpositive_inputs_raise(self, liq, gas, m):
         with pytest.raises(ValueError):
             absorption_factor(liq, gas, m)

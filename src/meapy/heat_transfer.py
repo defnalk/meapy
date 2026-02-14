@@ -34,10 +34,6 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import Union
-
-import numpy as np
-import numpy.typing as npt
 
 from meapy.constants import HeatExchangerParams
 
@@ -96,9 +92,7 @@ def stream_duty(
         -42505.0
     """
     if mass_flow_kg_s <= 0:
-        raise ValueError(
-            f"mass_flow_kg_s must be positive, got {mass_flow_kg_s!r}."
-        )
+        raise ValueError(f"mass_flow_kg_s must be positive, got {mass_flow_kg_s!r}.")
     if cp_j_kg_k <= 0:
         raise ValueError(f"cp_j_kg_k must be positive, got {cp_j_kg_k!r}.")
 
@@ -169,8 +163,8 @@ def lmtd_counter_current(
         >>> round(lmtd_counter_current(85, 42, 30, 68), 2)
         23.09
     """
-    delta_t1 = t_hot_in_c - t_cold_out_c   # hot end
-    delta_t2 = t_hot_out_c - t_cold_in_c   # cold end
+    delta_t1 = t_hot_in_c - t_cold_out_c  # hot end
+    delta_t2 = t_hot_out_c - t_cold_in_c  # cold end
 
     if delta_t1 <= 0 or delta_t2 <= 0:
         raise ValueError(
@@ -185,7 +179,9 @@ def lmtd_counter_current(
     else:
         lmtd = (delta_t1 - delta_t2) / math.log(delta_t1 / delta_t2)
 
-    logger.debug("LMTD (counter-current): ΔT₁=%.3f K, ΔT₂=%.3f K → LMTD=%.4f K", delta_t1, delta_t2, lmtd)
+    logger.debug(
+        "LMTD (counter-current): ΔT₁=%.3f K, ΔT₂=%.3f K → LMTD=%.4f K", delta_t1, delta_t2, lmtd
+    )
     return lmtd
 
 
@@ -209,7 +205,7 @@ def lmtd_co_current(
     Raises:
         ValueError: If either terminal ΔT is non-positive.
     """
-    delta_t1 = t_hot_in_c - t_cold_in_c    # inlet end
+    delta_t1 = t_hot_in_c - t_cold_in_c  # inlet end
     delta_t2 = t_hot_out_c - t_cold_out_c  # outlet end
 
     if delta_t1 <= 0 or delta_t2 <= 0:
@@ -439,9 +435,7 @@ def analyse_exchanger(
         ... )
     """
     if flow_direction not in {"counter", "co"}:
-        raise ValueError(
-            f"flow_direction must be 'counter' or 'co', got {flow_direction!r}."
-        )
+        raise ValueError(f"flow_direction must be 'counter' or 'co', got {flow_direction!r}.")
 
     mea_kg_s = mea_flow_kg_h * _CONV
     util_kg_s = utility_flow_kg_h * _CONV

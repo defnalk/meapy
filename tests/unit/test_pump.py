@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-import math
-
-import numpy as np
 import pytest
 
 from meapy.pump import (
@@ -17,7 +14,6 @@ from meapy.pump import (
     predict_level,
     safe_pump_speed,
 )
-
 
 # ---------------------------------------------------------------------------
 # ExponentialLevelModel

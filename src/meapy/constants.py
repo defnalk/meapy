@@ -60,10 +60,10 @@ class MEAProperties:
     CP_15_PCT_AT_25C: float = 3940.0  # J/(kg·K)   — DOW MEA datasheet
     CP_15_PCT_AT_40C: float = 3980.0  # J/(kg·K)
     CP_15_PCT_AT_60C: float = 4020.0  # J/(kg·K)
-    DENSITY_KG_M3: float = 1_008.0   # kg/m³
-    VISCOSITY_PA_S: float = 1.6e-3   # Pa·s
-    MW_MEA: float = 61.08            # g/mol
-    MW_CO2: float = 44.01            # g/mol
+    DENSITY_KG_M3: float = 1_008.0  # kg/m³
+    VISCOSITY_PA_S: float = 1.6e-3  # Pa·s
+    MW_MEA: float = 61.08  # g/mol
+    MW_CO2: float = 44.01  # g/mol
 
 
 class PlantGeometry:
@@ -79,12 +79,12 @@ class PlantGeometry:
         PACKING_TYPE: Descriptive name of the structured packing used.
     """
 
-    COLUMN_HEIGHT_M: float = 6.2       # m
-    COLUMN_DIAMETER_M: float = 0.1     # m  (100 mm ID)
+    COLUMN_HEIGHT_M: float = 6.2  # m
+    COLUMN_DIAMETER_M: float = 0.1  # m  (100 mm ID)
     COLUMN_CROSS_SECTION_M2: float = 3.14159 * (0.1 / 2) ** 2  # π r²  ≈ 7.854e-3 m²
     SAMPLING_HEIGHTS_M: list[float] = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5]  # ports 1–6
-    C100_PLATE_AREA_M2: float = 0.30   # m²  (manufacturer spec)
-    C200_PLATE_AREA_M2: float = 0.25   # m²
+    C100_PLATE_AREA_M2: float = 0.30  # m²  (manufacturer spec)
+    C200_PLATE_AREA_M2: float = 0.25  # m²
     PACKING_TYPE: str = "Sulzer MellapakPlus 252.Y"
 
 
@@ -103,10 +103,10 @@ class AlarmLimits:
         PUMP_SPEED_MAX_DESIGN_PCT: Design maximum pump speed for J100 (%).
     """
 
-    LT101_LOW_LEVEL_PCT: float = 10.0   # %  — low-level alarm
+    LT101_LOW_LEVEL_PCT: float = 10.0  # %  — low-level alarm
     LT101_LOW_SHUTDOWN_PCT: float = 5.0  # %  — trip setpoint
-    FT103_HIGH_FLOW_KG_H: float = 1_000.0   # kg/h
-    FT104_HIGH_FLOW_KG_H: float = 1_000.0   # kg/h
+    FT103_HIGH_FLOW_KG_H: float = 1_000.0  # kg/h
+    FT104_HIGH_FLOW_KG_H: float = 1_000.0  # kg/h
     PUMP_SPEED_MIN_PCT: float = 0.0
     PUMP_SPEED_MAX_DESIGN_PCT: float = 100.0
 
@@ -120,9 +120,9 @@ class HeatExchangerParams:
         FLOW_UNIT_CONVERSION: Conversion factor from kg/h to kg/s.
     """
 
-    U_LITERATURE_MIN_KW: float = 1.0   # kW/(m²·K)  — Engineering Toolbox (2003)
-    U_LITERATURE_MAX_KW: float = 4.0   # kW/(m²·K)
-    FLOW_UNIT_CONVERSION: float = 1.0 / 3_600.0   # kg/h → kg/s
+    U_LITERATURE_MIN_KW: float = 1.0  # kW/(m²·K)  — Engineering Toolbox (2003)
+    U_LITERATURE_MAX_KW: float = 4.0  # kW/(m²·K)
+    FLOW_UNIT_CONVERSION: float = 1.0 / 3_600.0  # kg/h → kg/s
 
 
 class ExperimentLabels:

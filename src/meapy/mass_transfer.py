@@ -29,12 +29,10 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import Sequence
+from collections.abc import Sequence
 
 import numpy as np
 import numpy.typing as npt
-
-from meapy.constants import PlantGeometry, MEAProperties
 
 __all__ = [
     "mole_ratio_to_fraction",
@@ -166,7 +164,9 @@ def koga_from_flux(
     Y_bottom = mole_fraction_to_ratio(y_bottom)
     Y_top = mole_fraction_to_ratio(y_top)
 
-    koga = (inert_gas_flow_mol_s / (cross_section_m2 * packed_height_m)) * math.log(Y_bottom / Y_top)
+    koga = (inert_gas_flow_mol_s / (cross_section_m2 * packed_height_m)) * math.log(
+        Y_bottom / Y_top
+    )
     logger.debug(
         "K_OGa = %.4f mol/(m³·s)  [V'=%.4f mol/s, Ac=%.4e m², H=%.2f m, Y_B/Y_T=%.4f]",
         koga,
@@ -238,7 +238,9 @@ def koga_profile(
         section_height = h_top - h_bot
 
         try:
-            koga_si = koga_from_flux(inert_gas_flow_mol_s, cross_section_m2, section_height, y_bot, y_top)
+            koga_si = koga_from_flux(
+                inert_gas_flow_mol_s, cross_section_m2, section_height, y_bot, y_top
+            )
             result[i] = koga_to_kmol_m3_h(koga_si)
         except ValueError as exc:
             logger.warning(
@@ -294,7 +296,9 @@ def composition_profile(
         )
 
     y_co2 = pct / 100.0
-    logger.debug("composition_profile: %d ports, y_CO2 range [%.4f, %.4f]", len(h), y_co2.min(), y_co2.max())
+    logger.debug(
+        "composition_profile: %d ports, y_CO2 range [%.4f, %.4f]", len(h), y_co2.min(), y_co2.max()
+    )
     return h, y_co2
 
 
@@ -357,7 +361,9 @@ def hog(
     if koga_mol_m3_s <= 0:
         raise ValueError(f"koga_mol_m3_s must be positive, got {koga_mol_m3_s!r}.")
     if inert_gas_flux_mol_m2_s <= 0:
-        raise ValueError(f"inert_gas_flux_mol_m2_s must be positive, got {inert_gas_flux_mol_m2_s!r}.")
+        raise ValueError(
+            f"inert_gas_flux_mol_m2_s must be positive, got {inert_gas_flux_mol_m2_s!r}."
+        )
     return inert_gas_flux_mol_m2_s / koga_mol_m3_s
 
 
@@ -383,7 +389,11 @@ def absorption_factor(
     Raises:
         ValueError: If any argument is non-positive.
     """
-    for name, val in (("liquid_flow_mol_s", liquid_flow_mol_s), ("gas_flow_mol_s", gas_flow_mol_s), ("m_slope", m_slope)):
+    for name, val in (
+        ("liquid_flow_mol_s", liquid_flow_mol_s),
+        ("gas_flow_mol_s", gas_flow_mol_s),
+        ("m_slope", m_slope),
+    ):
         if val <= 0:
             raise ValueError(f"{name} must be positive, got {val!r}.")
     a = liquid_flow_mol_s / (m_slope * gas_flow_mol_s)

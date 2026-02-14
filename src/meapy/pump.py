@@ -33,11 +33,9 @@ from __future__ import annotations
 import logging
 import math
 from dataclasses import dataclass, field
-from typing import Callable
 
 import numpy as np
 import numpy.typing as npt
-from scipy.optimize import brentq
 from scipy.stats import linregress
 
 from meapy.constants import AlarmLimits
@@ -251,14 +249,12 @@ def fit_exponential_level_model(
 
     ln_lev = np.log(lev)
     slope, intercept, r, _, _ = linregress(ps, ln_lev)
-    r_sq = float(r ** 2)
+    r_sq = float(r**2)
 
     l0 = math.exp(intercept)
     k = float(slope)
 
-    logger.info(
-        "Exponential level model: L₀=%.4f %%, k=%.6f /pct, R²=%.4f", l0, k, r_sq
-    )
+    logger.info("Exponential level model: L₀=%.4f %%, k=%.6f /pct, R²=%.4f", l0, k, r_sq)
     return ExponentialLevelModel(l0=l0, k=k, r_squared=r_sq)
 
 
@@ -290,9 +286,14 @@ def fit_linear_flowrate_model(
         raise ValueError("At least 2 data points are required to fit a linear model.")
 
     slope, intercept, r, _, _ = linregress(ps, fl)
-    r_sq = float(r ** 2)
+    r_sq = float(r**2)
 
-    logger.info("Linear flow model: slope=%.4f kg/(h·%%), intercept=%.4f kg/h, R²=%.4f", slope, intercept, r_sq)
+    logger.info(
+        "Linear flow model: slope=%.4f kg/(h·%%), intercept=%.4f kg/h, R²=%.4f",
+        slope,
+        intercept,
+        r_sq,
+    )
     return LinearFlowModel(slope=float(slope), intercept=float(intercept), r_squared=r_sq)
 
 
@@ -367,11 +368,15 @@ def safe_pump_speed(
 
     # --- Level constraint ---
     level_alarm_speed = level_model.invert(level_alarm_pct)
-    logger.info("Level alarm (LT101 = %.1f %%) reached at PS = %.2f %%", level_alarm_pct, level_alarm_speed)
+    logger.info(
+        "Level alarm (LT101 = %.1f %%) reached at PS = %.2f %%", level_alarm_pct, level_alarm_speed
+    )
 
     # --- Flow constraint ---
     flow_alarm_speed = flow_model.invert(flow_alarm_kg_h)
-    logger.info("Flow alarm (FT103 = %.1f kg/h) reached at PS = %.2f %%", flow_alarm_kg_h, flow_alarm_speed)
+    logger.info(
+        "Flow alarm (FT103 = %.1f kg/h) reached at PS = %.2f %%", flow_alarm_kg_h, flow_alarm_speed
+    )
 
     if level_alarm_speed <= speed_min_pct:
         raise ValueError(

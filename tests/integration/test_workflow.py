@@ -75,9 +75,7 @@ class TestFullPilotPlantWorkflow:
             profile = koga_profile(inert_flow, cross_section, heights_m, list(y_vals))
             # At least 3 out of 5 sections should have valid K_OGa values
             valid = np.sum(~np.isnan(profile))
-            assert valid >= 3, (
-                f"Experiment {label}: only {valid}/5 sections have valid K_OGa."
-            )
+            assert valid >= 3, f"Experiment {label}: only {valid}/5 sections have valid K_OGa."
 
     def test_koga_increases_with_mea_flowrate(self):
         """Higher MEA flowrate (Exp C > A) → higher total-column K_OGa."""
@@ -85,8 +83,8 @@ class TestFullPilotPlantWorkflow:
         inert_flow = kg_h_to_mol_s(500.0, 28.014)
         cross_section = meapy.constants.PlantGeometry.COLUMN_CROSS_SECTION_M2
 
-        pct_a = [14.0, 11.5, 9.0, 6.0, 3.5, 1.5]   # lowest MEA flow
-        pct_c = [14.0, 9.0, 5.5, 3.0, 1.5, 0.8]    # highest MEA flow
+        pct_a = [14.0, 11.5, 9.0, 6.0, 3.5, 1.5]  # lowest MEA flow
+        pct_c = [14.0, 9.0, 5.5, 3.0, 1.5, 0.8]  # highest MEA flow
 
         _, y_a = composition_profile(heights_m, pct_a)
         _, y_c = composition_profile(heights_m, pct_c)

@@ -14,12 +14,10 @@ Typical usage example::
 from __future__ import annotations
 
 import logging
-from typing import Sequence
+from collections.abc import Sequence
 
 import numpy as np
 import numpy.typing as npt
-
-from meapy.constants import MEAProperties
 
 __all__ = [
     "steady_state_mean",
@@ -71,8 +69,7 @@ def steady_state_mean(
     vals = list(values)
     if len(vals) < window:
         raise ValueError(
-            f"Need at least {window} values to compute a steady-state mean, "
-            f"got {len(vals)}."
+            f"Need at least {window} values to compute a steady-state mean, got {len(vals)}."
         )
 
     tail = vals[-window:]

@@ -36,10 +36,13 @@ class TestSteadyStateMean:
 
 
 class TestUnitConversions:
-    @pytest.mark.parametrize("flow_kg_h,mw,expected_mol_s", [
-        (44.01, 44.01, 0.277778),   # 1 kg/h of CO₂ gas
-        (3600.0, 18.015, 1000.0 / 18.015),  # 1 kg/s water
-    ])
+    @pytest.mark.parametrize(
+        "flow_kg_h,mw,expected_mol_s",
+        [
+            (44.01, 44.01, 0.277778),  # 1 kg/h of CO₂ gas
+            (3600.0, 18.015, 1000.0 / 18.015),  # 1 kg/s water
+        ],
+    )
     def test_kg_h_to_mol_s(self, flow_kg_h, mw, expected_mol_s):
         assert kg_h_to_mol_s(flow_kg_h, mw) == pytest.approx(expected_mol_s, rel=1e-4)
 
