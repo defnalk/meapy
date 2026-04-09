@@ -211,8 +211,17 @@ def rolling_mean(arr: npt.ArrayLike, window: int) -> npt.NDArray[np.float64]:
     if window < 1:
         raise ValueError(f"window must be ≥ 1, got {window!r}.")
     a = np.asarray(arr, dtype=float).ravel()
-    result = np.empty_like(a)
-    for i in range(len(a)):
-        start = max(0, i - window + 1)
-        result[i] = np.mean(a[start : i + 1])
-    return result
+    n = a.size
+    if n == 0:
+        return a
+    # Cumulative-sum trick: O(n) instead of the O(n·window) Python loop.
+    # csum[k] = sum(a[:k]); the trailing-window sum at index i is
+    # csum[i+1] - csum[max(0, i+1-window)], divided by the actual window
+    # length (which grows from 1 up to `window` over the leading edge).
+    csum = np.empty(n + 1, dtype=float)
+    csum[0] = 0.0
+    np.cumsum(a, out=csum[1:])
+    idx = np.arange(1, n + 1)
+    starts = np.maximum(0, idx - window)
+    counts = idx - starts  # same as np.minimum(idx, window)
+    return (csum[idx] - csum[starts]) / counts
