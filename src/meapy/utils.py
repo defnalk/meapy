@@ -184,6 +184,12 @@ def summarise_array(arr: npt.ArrayLike) -> dict[str, float]:
     a = np.asarray(arr, dtype=float).ravel()
     if a.size == 0:
         raise ValueError("Cannot summarise an empty array.")
+    if not np.all(np.isfinite(a)):
+        n_bad = int(np.sum(~np.isfinite(a)))
+        raise ValueError(
+            f"Input array contains {n_bad} non-finite value(s) (NaN/inf); "
+            "summary statistics would be poisoned. Clean or mask the data first."
+        )
     return {
         "mean": float(np.mean(a)),
         "std": float(np.std(a, ddof=1)) if a.size > 1 else 0.0,
