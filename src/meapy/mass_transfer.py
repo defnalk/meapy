@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import logging
 import math
+import warnings
 from collections.abc import Sequence
 
 import numpy as np
@@ -315,14 +316,17 @@ def ntu_og(y_bottom: float, y_top: float, m_slope: float = 0.0) -> float:
 
     NTU_OG ≈ ln(Y_bottom / Y_top)
 
-    For a rigorous calculation including the equilibrium back-pressure,
-    pass the Henry's law slope *m_slope*.
-
     Args:
         y_bottom: CO₂ mole fraction entering the absorber (bottom).
         y_top: CO₂ mole fraction leaving the absorber (top).
-        m_slope: Henry's law slope m = y* / x (dimensionless).  Set to 0
-            (default) to neglect equilibrium back-pressure.
+        m_slope: **Deprecated and currently ignored.**  In v0.1.x this
+            parameter was documented as enabling an equilibrium-corrected
+            (Colburn) calculation, but no such code path exists — the
+            function always returns the dilute-limit ``ln(Y_b / Y_t)``.
+            A non-zero value now raises ``DeprecationWarning``; the
+            parameter will be removed in v0.2.0.  For a rigorous Colburn
+            calculation, use a forthcoming dedicated entry point that
+            takes the absorption factor explicitly (see issue #5).
 
     Returns:
         Dimensionless NTU_OG.
@@ -335,6 +339,19 @@ def ntu_og(y_bottom: float, y_top: float, m_slope: float = 0.0) -> float:
             raise ValueError(f"{name} must be in (0, 1), got {val!r}.")
     if y_top >= y_bottom:
         raise ValueError(f"y_top ({y_top}) must be < y_bottom ({y_bottom}) for absorption.")
+
+    if m_slope != 0.0:
+        warnings.warn(
+            "ntu_og(m_slope=...) has never been implemented and is silently "
+            "ignored — the function always returns the dilute-limit "
+            "ln(Y_bottom / Y_top). The parameter will be removed in meapy "
+            "v0.2.0; until then, calling with a non-zero m_slope produces "
+            "the same result as calling with m_slope=0. See "
+            "https://github.com/defnalk/meapy/issues/5 for the planned "
+            "Colburn-based replacement API.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
     Y_b = mole_fraction_to_ratio(y_bottom)
     Y_t = mole_fraction_to_ratio(y_top)
