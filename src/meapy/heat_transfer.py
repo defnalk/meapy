@@ -302,6 +302,16 @@ def efficiency(q_cold_w: float, q_hot_w: float) -> float:
         raise ValueError("q_hot_w must not be zero; efficiency is undefined.")
     eta = q_cold_w / abs(q_hot_w)
     logger.debug("efficiency η = %.4f", eta)
+    if eta > 1.0:
+        logger.warning(
+            "Thermal efficiency η = %.4f exceeds unity (Q_cold=%.2f W, |Q_hot|=%.2f W). "
+            "This indicates a measurement inconsistency: instrumentation drift, heat "
+            "gain from surroundings, or a swapped hot/cold stream assignment. Verify "
+            "transmitter calibration before trusting downstream U/ε/NTU values.",
+            eta,
+            q_cold_w,
+            abs(q_hot_w),
+        )
     return eta
 
 
