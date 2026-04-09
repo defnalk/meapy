@@ -1,0 +1,22 @@
+# CODEOWNERS — Required reviewers for sensitive paths.
+# Syntax: <path pattern>  <owner> [<owner>...]
+# Docs: https://docs.github.com/en/repositories/managing-your-repositories-settings-and-security/customizing-your-repository/about-code-owners
+
+# Default owner for everything not matched below
+*                       @defnalk
+
+# Infrastructure as code — review required
+/infra/                 @defnalk
+/infra/**               @defnalk
+
+# CI/CD pipelines and security policies
+/.github/               @defnalk
+/.github/workflows/     @defnalk
+
+# Container build files
+/Dockerfile             @defnalk
+/Dockerfile.*           @defnalk
+/docker-compose.yml     @defnalk
+
+# Release / deploy docs
+/DEPLOYMENT.md          @defnalk
