@@ -16,8 +16,8 @@ Typical usage example::
 from __future__ import annotations
 
 import math
+from collections.abc import Mapping
 from types import MappingProxyType
-from typing import Mapping
 
 __all__ = [
     "MEAProperties",
