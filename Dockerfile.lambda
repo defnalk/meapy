@@ -20,7 +20,7 @@ COPY src/ ./src/
 RUN pip install --upgrade pip build \
  && pip wheel --wheel-dir /wheels .
 
-FROM public.ecr.aws/lambda/python:3.11
+FROM public.ecr.aws/lambda/python:3.13
 
 COPY --from=base /wheels/*.whl /tmp/
 RUN pip install /tmp/*.whl && rm -rf /tmp/*.whl
