@@ -246,6 +246,11 @@ def fit_exponential_level_model(
             f"All MEA level values must be strictly positive for log-linearisation.  "
             f"Found {(lev <= 0).sum()} non-positive value(s)."
         )
+    if np.ptp(ps) == 0:
+        raise ValueError(
+            "pump_speeds_pct has zero variance; cannot fit an exponential model "
+            "(slope would be undefined)."
+        )
 
     ln_lev = np.log(lev)
     slope, intercept, r, _, _ = linregress(ps, ln_lev)
@@ -284,6 +289,11 @@ def fit_linear_flowrate_model(
         )
     if len(ps) < 2:
         raise ValueError("At least 2 data points are required to fit a linear model.")
+    if np.ptp(ps) == 0:
+        raise ValueError(
+            "pump_speeds_pct has zero variance; cannot fit a linear model "
+            "(slope would be undefined)."
+        )
 
     slope, intercept, r, _, _ = linregress(ps, fl)
     r_sq = float(r**2)
