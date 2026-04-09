@@ -16,6 +16,8 @@ Typical usage example::
 from __future__ import annotations
 
 import math
+from types import MappingProxyType
+from typing import Mapping
 
 __all__ = [
     "MEAProperties",
@@ -84,7 +86,7 @@ class PlantGeometry:
     COLUMN_HEIGHT_M: float = 6.2  # m
     COLUMN_DIAMETER_M: float = 0.1  # m  (100 mm ID)
     COLUMN_CROSS_SECTION_M2: float = math.pi * (0.1 / 2) ** 2  # π r²  ≈ 7.854e-3 m²
-    SAMPLING_HEIGHTS_M: list[float] = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5]  # ports 1–6
+    SAMPLING_HEIGHTS_M: tuple[float, ...] = (0.5, 1.5, 2.5, 3.5, 4.5, 5.5)  # ports 1–6
     C100_PLATE_AREA_M2: float = 0.30  # m²  (manufacturer spec)
     C200_PLATE_AREA_M2: float = 0.25  # m²
     PACKING_TYPE: str = "Sulzer MellapakPlus 252.Y"
@@ -136,11 +138,13 @@ class ExperimentLabels:
             experiment in kg/h, as reported in Table 5.2.1 of the main report.
     """
 
-    LABELS: list[str] = ["A", "B", "C", "D", "E"]
-    COOLING_WATER_FLOWRATES_KG_H: dict[str, float] = {
-        "A": 722.0,
-        "B": 719.0,
-        "C": 716.0,
-        "D": 541.0,
-        "E": 1615.0,
-    }
+    LABELS: tuple[str, ...] = ("A", "B", "C", "D", "E")
+    COOLING_WATER_FLOWRATES_KG_H: Mapping[str, float] = MappingProxyType(
+        {
+            "A": 722.0,
+            "B": 719.0,
+            "C": 716.0,
+            "D": 541.0,
+            "E": 1615.0,
+        }
+    )
