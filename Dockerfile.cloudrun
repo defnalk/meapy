@@ -1,0 +1,19 @@
+# Dockerfile.cloudrun — meapy wrapped in a tiny FastAPI/uvicorn server for
+# Google Cloud Run. Listens on $PORT (Cloud Run injects it). The server module
+# is inlined here to keep the runtime image self-contained.
+
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 PORT=8080
+
+WORKDIR /app
+COPY pyproject.toml README.md ./
+COPY src/ ./src/
+
+RUN pip install --upgrade pip \
+ && pip install . "fastapi>=0.110" "uvicorn[standard]>=0.29"
+
+COPY src/meapy/cloudrun_server.py /app/server.py
+
+EXPOSE 8080
+CMD ["sh", "-c", "uvicorn server:app --host 0.0.0.0 --port ${PORT}"]

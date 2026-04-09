@@ -1,0 +1,46 @@
+# docker-compose.yml — Local development services for meapy.
+#
+# Usage:
+#   docker compose run --rm meapy-dev    # interactive shell with src/ mounted
+#   docker compose run --rm meapy-test   # run pytest with coverage
+#
+# Modify when adding new dev services (db, cache, etc.) or changing mounts.
+
+services:
+  meapy-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    image: meapy:dev
+    volumes:
+      - ./src:/build/src
+      - ./tests:/build/tests
+      - ./examples:/build/examples
+    working_dir: /build
+    environment:
+      LOG_LEVEL: DEBUG
+      PYTHONDONTWRITEBYTECODE: "1"
+    entrypoint: ["/bin/bash"]
+    stdin_open: true
+    tty: true
+
+  meapy-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    image: meapy:dev
+    volumes:
+      - ./src:/build/src
+      - ./tests:/build/tests
+    working_dir: /build
+    environment:
+      LOG_LEVEL: DEBUG
+    command: >
+      pytest tests/
+        -v
+        --cov=meapy
+        --cov-report=term-missing
+        --cov-report=xml:/build/coverage.xml
+        --cov-fail-under=90

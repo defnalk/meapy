@@ -1,4 +1,10 @@
-.PHONY: install lint test clean docs help
+.PHONY: install lint test clean docs help \
+        docker-build docker-test docker-push \
+        infra-plan infra-apply deploy
+
+IMAGE       ?= ghcr.io/defnalk/meapy
+IMAGE_TAG   ?= latest
+INFRA_DIR   := infra
 
 PYTHON  := python
 SRC     := src/meapy
@@ -51,3 +57,22 @@ examples:  ## Run all example scripts
 
 typecheck:
 	python -m mypy src/
+
+# ─── Docker ───────────────────────────────────────────────────────────────
+docker-build:  ## Build the production Docker image
+	docker build -t $(IMAGE):$(IMAGE_TAG) .
+
+docker-test:  ## Run the test suite inside Docker
+	docker compose run --rm meapy-test
+
+docker-push:  ## Push the production image to GHCR
+	docker push $(IMAGE):$(IMAGE_TAG)
+
+# ─── Infrastructure ───────────────────────────────────────────────────────
+infra-plan:  ## terraform plan in infra/
+	cd $(INFRA_DIR) && terraform init -input=false && terraform plan
+
+infra-apply:  ## terraform apply in infra/
+	cd $(INFRA_DIR) && terraform init -input=false && terraform apply -auto-approve
+
+deploy: lint test docker-build docker-push infra-apply  ## Full deploy pipeline

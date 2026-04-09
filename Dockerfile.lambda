@@ -1,0 +1,30 @@
+# Dockerfile.lambda — Container image for AWS Lambda deployment.
+#
+# Re-uses the production wheel from the main Dockerfile's builder stage and
+# layers it on top of the official AWS Lambda Python 3.11 base image, which
+# bundles the Lambda Runtime Interface Client (RIC).
+#
+# Build:
+#   docker build -f Dockerfile.lambda -t meapy:lambda .
+#
+# Modify when:
+#   - Bumping the Lambda runtime base image
+#   - Changing the handler entrypoint
+
+FROM python:3.11-slim AS base
+
+ENV PIP_NO_CACHE_DIR=1
+WORKDIR /build
+COPY pyproject.toml README.md ./
+COPY src/ ./src/
+RUN pip install --upgrade pip build \
+ && pip wheel --wheel-dir /wheels .
+
+FROM public.ecr.aws/lambda/python:3.11
+
+COPY --from=base /wheels/*.whl /tmp/
+RUN pip install /tmp/*.whl && rm -rf /tmp/*.whl
+
+COPY src/meapy/lambda_handler.py ${LAMBDA_TASK_ROOT}/
+
+CMD ["lambda_handler.handler"]
