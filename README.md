@@ -98,6 +98,36 @@ pip install -e ".[dev]"
 
 **Requirements:** Python 3.10+, NumPy ≥ 1.24, SciPy ≥ 1.11
 
+**With Docker** (no local Python install required):
+
+```bash
+# Build the multi-stage production image (non-root, healthcheck, < 150 MB)
+docker build -t meapy:latest .
+
+# Run the CLI
+docker run --rm meapy:latest --version
+docker run --rm meapy:latest --help
+
+# Drop into a Python REPL with meapy importable
+docker run --rm -it --entrypoint python meapy:latest
+
+# Mount your analysis scripts and run them inside the container
+docker run --rm -v "$PWD":/work -w /work meapy:latest python my_analysis.py
+```
+
+For local development with a hot-reload bind mount and a separate test
+service, use the bundled Compose file:
+
+```bash
+docker compose up meapy-dev      # interactive dev container
+docker compose run --rm meapy-test   # one-shot pytest run
+```
+
+Specialised images are available for serverless deployments:
+`Dockerfile.lambda` (AWS Lambda) and `Dockerfile.cloudrun` (GCP Cloud Run,
+FastAPI/uvicorn). See [`DEPLOYMENT.md`](DEPLOYMENT.md) for the full deploy
+recipes.
+
 ---
 
 ##  Quick Start
