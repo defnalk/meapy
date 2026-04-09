@@ -106,6 +106,15 @@ class ExponentialLevelModel:
         """
         if target_level_pct <= 0:
             raise ValueError(f"target_level_pct must be positive, got {target_level_pct!r}.")
+        if math.isclose(self.k, 0.0, abs_tol=1e-12):
+            # A flat fit (k = 0) means level is independent of speed; no
+            # finite speed solves L₀·exp(0) = target unless target == L₀,
+            # in which case every speed does. Either way, inversion is
+            # ill-posed — surface a clear error rather than dividing by zero.
+            raise ValueError(
+                "Cannot invert an ExponentialLevelModel with k ≈ 0: the fitted "
+                "level is independent of pump speed."
+            )
         return math.log(target_level_pct / self.l0) / self.k
 
 
