@@ -1,14 +1,38 @@
 # meapy
 
-![Tests](https://github.com/defnalk/meapy/actions/workflows/ci.yml/badge.svg)
-![Python](https://img.shields.io/badge/python-3.10+-blue)
+![CI](https://github.com/defnalk/meapy/actions/workflows/ci.yml/badge.svg)
+![Release](https://github.com/defnalk/meapy/actions/workflows/release.yml/badge.svg)
+![CodeQL](https://github.com/defnalk/meapy/actions/workflows/codeql.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.10%20|%203.11%20|%203.12-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Coverage](https://img.shields.io/badge/coverage-90%25+-brightgreen)
+![mypy: strict](https://img.shields.io/badge/mypy-strict-2A6DB2)
 ![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)
+![Docker](https://img.shields.io/badge/docker-multi--arch-2496ED?logo=docker&logoColor=white)
+![Signed: cosign](https://img.shields.io/badge/images-signed%20with%20cosign-4B0082)
+![IaC](https://img.shields.io/badge/IaC-Terraform-7B42BC?logo=terraform&logoColor=white)
 
 > **A scientific Python library for analysing post-combustion CO₂ capture processes based on monoethanolamine (MEA) absorption.**
 
 meapy provides a clean, tested, and typed API for the core calculations performed when commissioning and evaluating MEA-based carbon capture pilot plants , heat exchanger thermal analysis, packed-column mass transfer, and pump commissioning , styled after scientific packages like [pvlib](https://pvlib-python.readthedocs.io/) and [scipy](https://scipy.org/).
+
+---
+
+## ✨ Highlights
+
+A research library shipped with the rigour of a production service:
+
+- **Science** — LMTD/NTU heat-exchanger analysis, K_OGa packed-column profiling, and exponential pump commissioning models, all benchmarked against an Imperial College pilot plant.
+- **Quality** — `mypy --strict`, ruff lint+format, ≥ 90 % coverage gate, 124 unit tests across 8 modules, Google-style docstrings on every public symbol.
+- **Cross-platform CI** — Python 3.10/3.11/3.12 × Ubuntu/macOS test matrix, Codecov upload, every action pinned to a full SHA.
+- **Containerised** — multi-stage `Dockerfile` (non-root, healthcheck, < 150 MB), plus `Dockerfile.lambda` for AWS and `Dockerfile.cloudrun` for GCP.
+- **Supply-chain hardened** — released images are **signed with cosign (keyless OIDC)**, ship an **SPDX SBOM** as a cosign attestation, and carry SLSA build provenance.
+- **Multi-cloud IaC** — Terraform modules for **AWS Lambda (arm64 container, ECR, IAM least-priv, Function URL or API Gateway v2)** and **GCP Cloud Run (Artifact Registry, scale-to-zero)**.
+- **Keyless deploys** — GitHub Actions assumes a least-privileged AWS role via OIDC; no long-lived access keys.
+- **Static analysis** — weekly CodeQL `security-and-quality` queries, Dependabot across 4 ecosystems, CODEOWNERS gating sensitive paths.
+- **Trusted publishing** — PyPI releases via PEP 740 trusted publisher, validated through TestPyPI before promotion.
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for the full release runbook and architecture diagram.
 
 ---
 
@@ -264,12 +288,52 @@ meapy/
 │   ├── heat_exchanger_analysis.py
 │   └── pump_commissioning.py
 ├── docs/
-├── .github/workflows/ci.yml
+├── infra/                   # Terraform — AWS Lambda + ECR + IAM + OIDC
+│   ├── main.tf  variables.tf  lambda.tf  api_gateway.tf
+│   ├── outputs.tf  oidc.tf   backend.tf  deploy.sh
+│   └── cloudrun/main.tf     # GCP Cloud Run alternative
+├── Dockerfile               # Multi-stage production image (non-root)
+├── Dockerfile.lambda        # AWS Lambda container image
+├── Dockerfile.cloudrun      # GCP Cloud Run image (FastAPI/uvicorn)
+├── docker-compose.yml       # meapy-dev / meapy-test services
+├── .github/
+│   ├── workflows/ci.yml         # lint + test matrix + Docker smoke + Scout
+│   ├── workflows/release.yml    # PyPI (OIDC) + GHCR + cosign + SBOM + GH release
+│   ├── workflows/codeql.yml     # weekly static analysis
+│   ├── dependabot.yml           # actions / pip / docker / terraform
+│   └── CODEOWNERS
+├── .pre-commit-config.yaml  # ruff + mypy + terraform fmt/validate
+├── DEPLOYMENT.md            # Release runbook + Mermaid architecture diagram
 ├── pyproject.toml
 ├── Makefile
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
 └── LICENSE
+```
+
+---
+
+## 🚀 Production Engineering
+
+| Concern | How meapy handles it |
+|---|---|
+| **Builds** | Multi-stage Dockerfile, tests run inside the builder, image < 150 MB |
+| **CI** | py3.10/3.11/3.12 × Ubuntu/macOS, ruff + mypy + pytest, Docker smoke + Scout CVE scan |
+| **Releases** | Tag `v*` → TestPyPI → PyPI (OIDC) → multi-arch GHCR → signed GitHub Release |
+| **Image signing** | `cosign sign --yes` (keyless, Sigstore Fulcio/Rekor) on every released tag |
+| **SBOM** | SPDX JSON via Syft, attached as a `cosign attest --type spdxjson` predicate |
+| **AWS deploy** | Container Lambda on Graviton, ECR with 5-image retention, Function URL **or** API Gateway v2 |
+| **GCP deploy** | Cloud Run v2, Artifact Registry, scale-to-zero, public via IAM binding |
+| **Secrets** | Zero hardcoded credentials — PyPI uses OIDC, AWS uses OIDC trust role, GHCR uses `GITHUB_TOKEN` |
+| **Security scans** | CodeQL `security-and-quality`, Docker Scout (critical/high), Dependabot weekly |
+| **Branch hygiene** | CODEOWNERS for `infra/` and `.github/`; ready for branch-protection rulesets |
+
+Verify a published image yourself:
+
+```bash
+cosign verify ghcr.io/defnalk/meapy:latest \
+  --certificate-identity-regexp "https://github.com/defnalk/meapy/.*" \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```
 
 ---
