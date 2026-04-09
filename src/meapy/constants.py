@@ -15,6 +15,8 @@ Typical usage example::
 
 from __future__ import annotations
 
+import math
+
 __all__ = [
     "MEAProperties",
     "PlantGeometry",
@@ -81,7 +83,7 @@ class PlantGeometry:
 
     COLUMN_HEIGHT_M: float = 6.2  # m
     COLUMN_DIAMETER_M: float = 0.1  # m  (100 mm ID)
-    COLUMN_CROSS_SECTION_M2: float = 3.14159 * (0.1 / 2) ** 2  # π r²  ≈ 7.854e-3 m²
+    COLUMN_CROSS_SECTION_M2: float = math.pi * (0.1 / 2) ** 2  # π r²  ≈ 7.854e-3 m²
     SAMPLING_HEIGHTS_M: list[float] = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5]  # ports 1–6
     C100_PLATE_AREA_M2: float = 0.30  # m²  (manufacturer spec)
     C200_PLATE_AREA_M2: float = 0.25  # m²
