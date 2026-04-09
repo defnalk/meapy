@@ -106,6 +106,15 @@ class ExponentialLevelModel:
         """
         if target_level_pct <= 0:
             raise ValueError(f"target_level_pct must be positive, got {target_level_pct!r}.")
+        if math.isclose(self.k, 0.0, abs_tol=1e-12):
+            # A flat fit (k = 0) means level is independent of speed; no
+            # finite speed solves L₀·exp(0) = target unless target == L₀,
+            # in which case every speed does. Either way, inversion is
+            # ill-posed — surface a clear error rather than dividing by zero.
+            raise ValueError(
+                "Cannot invert an ExponentialLevelModel with k ≈ 0: the fitted "
+                "level is independent of pump speed."
+            )
         return math.log(target_level_pct / self.l0) / self.k
 
 
@@ -246,6 +255,11 @@ def fit_exponential_level_model(
             f"All MEA level values must be strictly positive for log-linearisation.  "
             f"Found {(lev <= 0).sum()} non-positive value(s)."
         )
+    if np.ptp(ps) == 0:
+        raise ValueError(
+            "pump_speeds_pct has zero variance; cannot fit an exponential model "
+            "(slope would be undefined)."
+        )
 
     ln_lev = np.log(lev)
     slope, intercept, r, _, _ = linregress(ps, ln_lev)
@@ -284,6 +298,11 @@ def fit_linear_flowrate_model(
         )
     if len(ps) < 2:
         raise ValueError("At least 2 data points are required to fit a linear model.")
+    if np.ptp(ps) == 0:
+        raise ValueError(
+            "pump_speeds_pct has zero variance; cannot fit a linear model "
+            "(slope would be undefined)."
+        )
 
     slope, intercept, r, _, _ = linregress(ps, fl)
     r_sq = float(r**2)
