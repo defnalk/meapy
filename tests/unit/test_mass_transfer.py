@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import warnings
 
 import numpy as np
 import pytest
@@ -192,6 +193,20 @@ class TestNTUOG:
     def test_invalid_fractions_raise(self):
         with pytest.raises(ValueError):
             ntu_og(0.02, 0.14)  # y_top ≥ y_bottom
+
+    def test_nonzero_m_slope_warns_and_returns_dilute_limit(self):
+        """m_slope is deprecated (issue #5): warn but return the same value as m_slope=0."""
+        baseline = ntu_og(0.14, 0.02)
+        with pytest.warns(DeprecationWarning, match="m_slope"):
+            warned = ntu_og(0.14, 0.02, m_slope=0.85)
+        assert warned == pytest.approx(baseline, rel=1e-12)
+
+    def test_zero_m_slope_does_not_warn(self):
+        """The default m_slope=0 path must remain warning-free."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")  # any warning becomes an error
+            ntu_og(0.14, 0.02)
+            ntu_og(0.14, 0.02, m_slope=0.0)
 
 
 # ---------------------------------------------------------------------------
