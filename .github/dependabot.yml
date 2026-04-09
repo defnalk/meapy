@@ -1,0 +1,41 @@
+# dependabot.yml — Automatic dependency updates.
+# Modify when adding new package ecosystems (e.g. npm) or changing cadence.
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: docker
+    directory: "/"
+    target-branch: main
+    schedule:
+      interval: weekly
+    # Track Lambda + Cloud Run Dockerfiles too
+    # (Dependabot picks up all Dockerfile* in the directory)
+
+  - package-ecosystem: terraform
+    directory: "/infra"
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: terraform
+    directory: "/infra/cloudrun"
+    schedule:
+      interval: weekly
