@@ -446,6 +446,15 @@ def analyse_exchanger(
     """
     if flow_direction not in {"counter", "co"}:
         raise ValueError(f"flow_direction must be 'counter' or 'co', got {flow_direction!r}.")
+    if math.isclose(t_mea_in_c, t_utility_in_c, abs_tol=1e-6):
+        # Without a driving force there is no hot/cold assignment, LMTD is
+        # undefined, and effectiveness divides by zero. Fail up front with a
+        # message that names the real cause rather than letting a downstream
+        # helper raise something cryptic.
+        raise ValueError(
+            f"t_mea_in_c ({t_mea_in_c}) and t_utility_in_c ({t_utility_in_c}) "
+            "are equal; no driving force, exchanger analysis is undefined."
+        )
 
     mea_kg_s = mea_flow_kg_h * _CONV
     util_kg_s = utility_flow_kg_h * _CONV
