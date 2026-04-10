@@ -115,7 +115,7 @@ docker run --rm -it --entrypoint python meapy:latest
 docker run --rm -v "$PWD":/work -w /work meapy:latest python my_analysis.py
 ```
 
-For local development with a hot-reload bind mount and a separate test
+For local development with a hot reload bind mount and a separate test
 service, use the bundled Compose file:
 
 ```bash
