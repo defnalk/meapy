@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import numpy as np
-import pandas as pd
 import pytest
 
-from meapy.session import PlantSession, PlantSessionResult
+pd = pytest.importorskip("pandas")
+
+from meapy.session import PlantSession, PlantSessionResult  # noqa: E402
 
 
 @pytest.fixture
