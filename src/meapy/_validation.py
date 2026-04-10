@@ -44,9 +44,7 @@ def require_in_range(
     if not (lo_ok and hi_ok):
         lo_br = "[" if lo_inclusive else "("
         hi_br = "]" if hi_inclusive else ")"
-        raise ValueError(
-            f"{name} must be in {lo_br}{lo}, {hi}{hi_br}, got {value!r}."
-        )
+        raise ValueError(f"{name} must be in {lo_br}{lo}, {hi}{hi_br}, got {value!r}.")
 
 
 def require_same_length(**arrays: Sized) -> None:

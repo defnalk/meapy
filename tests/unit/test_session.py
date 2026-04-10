@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from meapy.session import PlantSession, PlantSessionResult, WindowResult
+from meapy.session import PlantSession, PlantSessionResult
 
 
 @pytest.fixture
@@ -16,36 +16,48 @@ def steady_df():
     idx = pd.date_range("2025-01-01", periods=n, freq="1min")
     rng = np.random.default_rng(42)
     data = {
-        "FT103": np.concatenate([
-            rng.normal(900, 50, 30),   # noisy
-            np.full(40, 900.0) + rng.normal(0, 0.1, 40),  # steady
-            rng.normal(900, 50, 30),   # noisy
-        ]),
-        "TT201": np.concatenate([
-            rng.normal(85, 5, 30),
-            np.full(40, 85.0) + rng.normal(0, 0.05, 40),
-            rng.normal(85, 5, 30),
-        ]),
-        "TT202": np.concatenate([
-            rng.normal(42, 5, 30),
-            np.full(40, 42.0) + rng.normal(0, 0.05, 40),
-            rng.normal(42, 5, 30),
-        ]),
-        "FT201": np.concatenate([
-            rng.normal(800, 50, 30),
-            np.full(40, 800.0) + rng.normal(0, 0.1, 40),
-            rng.normal(800, 50, 30),
-        ]),
-        "TT301": np.concatenate([
-            rng.normal(30, 3, 30),
-            np.full(40, 30.0) + rng.normal(0, 0.05, 40),
-            rng.normal(30, 3, 30),
-        ]),
-        "TT302": np.concatenate([
-            rng.normal(68, 3, 30),
-            np.full(40, 68.0) + rng.normal(0, 0.05, 40),
-            rng.normal(68, 3, 30),
-        ]),
+        "FT103": np.concatenate(
+            [
+                rng.normal(900, 50, 30),  # noisy
+                np.full(40, 900.0) + rng.normal(0, 0.1, 40),  # steady
+                rng.normal(900, 50, 30),  # noisy
+            ]
+        ),
+        "TT201": np.concatenate(
+            [
+                rng.normal(85, 5, 30),
+                np.full(40, 85.0) + rng.normal(0, 0.05, 40),
+                rng.normal(85, 5, 30),
+            ]
+        ),
+        "TT202": np.concatenate(
+            [
+                rng.normal(42, 5, 30),
+                np.full(40, 42.0) + rng.normal(0, 0.05, 40),
+                rng.normal(42, 5, 30),
+            ]
+        ),
+        "FT201": np.concatenate(
+            [
+                rng.normal(800, 50, 30),
+                np.full(40, 800.0) + rng.normal(0, 0.1, 40),
+                rng.normal(800, 50, 30),
+            ]
+        ),
+        "TT301": np.concatenate(
+            [
+                rng.normal(30, 3, 30),
+                np.full(40, 30.0) + rng.normal(0, 0.05, 40),
+                rng.normal(30, 3, 30),
+            ]
+        ),
+        "TT302": np.concatenate(
+            [
+                rng.normal(68, 3, 30),
+                np.full(40, 68.0) + rng.normal(0, 0.05, 40),
+                rng.normal(68, 3, 30),
+            ]
+        ),
     }
     return pd.DataFrame(data, index=idx)
 
@@ -73,8 +85,16 @@ class TestPlantSession:
             PlantSession(steady_df, column_map)
 
     def test_non_datetime_index_raises(self, column_map):
-        df = pd.DataFrame({"FT103": [1, 2], "TT201": [3, 4], "TT202": [5, 6],
-                           "FT201": [7, 8], "TT301": [9, 10], "TT302": [11, 12]})
+        df = pd.DataFrame(
+            {
+                "FT103": [1, 2],
+                "TT201": [3, 4],
+                "TT202": [5, 6],
+                "FT201": [7, 8],
+                "TT301": [9, 10],
+                "TT302": [11, 12],
+            }
+        )
         with pytest.raises(ValueError, match="DatetimeIndex"):
             PlantSession(df, column_map)
 

@@ -118,9 +118,7 @@ def steady_state(
         raise ValueError(f"tol must be non-negative, got {tol!r}.")
     a = np.asarray(values, dtype=float).ravel()
     if a.size < window:
-        raise ValueError(
-            f"Need at least {window} values, got {a.size}."
-        )
+        raise ValueError(f"Need at least {window} values, got {a.size}.")
 
     # Mark each position i as steady if max-min in [i, i+window) ≤ tol
     n = a.size
@@ -284,4 +282,5 @@ def rolling_mean(arr: npt.ArrayLike, window: int) -> npt.NDArray[np.float64]:
     idx = np.arange(1, n + 1)
     starts = np.maximum(0, idx - window)
     counts = idx - starts  # same as np.minimum(idx, window)
-    return (csum[idx] - csum[starts]) / counts
+    result: npt.NDArray[np.float64] = (csum[idx] - csum[starts]) / counts
+    return result

@@ -205,7 +205,11 @@ class TestNTUOG:
         y_in, y_out = 0.14, 0.02
         expected = math.log(y_in / y_out)
         result = ntu_og(
-            y_in, y_out, m_slope=0.85, x_in=0.0, absorption_factor_val=1e12,
+            y_in,
+            y_out,
+            m_slope=0.85,
+            x_in=0.0,
+            absorption_factor_val=1e12,
         )
         assert result == pytest.approx(expected, rel=1e-6)
 
@@ -224,7 +228,7 @@ class TestNTUOG:
         with pytest.raises(ValueError, match="m_slope"):
             ntu_og(0.14, 0.02, m_slope=-0.5, absorption_factor_val=2.0)
 
-    def test_kremser_nonpositive_A_raises(self):
+    def test_kremser_nonpositive_a_raises(self):
         with pytest.raises(ValueError):
             ntu_og(0.14, 0.02, m_slope=0.85, absorption_factor_val=0.0)
 

@@ -55,8 +55,7 @@ try:
     import pandas as pd
 except ImportError as _exc:
     raise ImportError(
-        "pandas is required for meapy.session. "
-        "Install it with: pip install meapy[data]"
+        "pandas is required for meapy.session. Install it with: pip install meapy[data]"
     ) from _exc
 
 __all__ = [
@@ -157,16 +156,13 @@ class PlantSession:
     ) -> None:
         if not isinstance(df.index, pd.DatetimeIndex):
             raise ValueError(
-                "DataFrame must have a DatetimeIndex. "
-                "Use pd.to_datetime() on the index first."
+                "DataFrame must have a DatetimeIndex. Use pd.to_datetime() on the index first."
             )
         self._df = df
         self._column_map = dict(column_map)
 
         # Validate that mapped columns exist in the DataFrame
-        missing = [
-            col for col in self._column_map.values() if col not in df.columns
-        ]
+        missing = [col for col in self._column_map.values() if col not in df.columns]
         if missing:
             raise ValueError(
                 f"The following mapped columns are missing from the DataFrame: {missing}"
@@ -202,7 +198,8 @@ class PlantSession:
     ) -> npt.NDArray[np.float64]:
         """NumPy array of a mapped column within a steady-state window."""
         col = self._resolve(param)
-        return self._df[col].iloc[start : end + 1].to_numpy(dtype=float)
+        arr: npt.NDArray[np.float64] = self._df[col].iloc[start : end + 1].to_numpy(dtype=float)
+        return arr
 
     # ------------------------------------------------------------------
     # Public API
@@ -287,7 +284,9 @@ class PlantSession:
                 except (ValueError, ZeroDivisionError) as exc:
                     logger.warning(
                         "Heat-transfer failed for window %s–%s: %s",
-                        ts_start, ts_end, exc,
+                        ts_start,
+                        ts_end,
+                        exc,
                     )
 
             # --- Mass transfer -------------------------------------------
@@ -312,7 +311,9 @@ class PlantSession:
                 except (ValueError, ZeroDivisionError) as exc:
                     logger.warning(
                         "Mass-transfer failed for window %s–%s: %s",
-                        ts_start, ts_end, exc,
+                        ts_start,
+                        ts_end,
+                        exc,
                     )
 
             # --- Pump commissioning --------------------------------------
@@ -332,7 +333,9 @@ class PlantSession:
                 except (ValueError, RuntimeError) as exc:
                     logger.warning(
                         "Pump analysis failed for window %s–%s: %s",
-                        ts_start, ts_end, exc,
+                        ts_start,
+                        ts_end,
+                        exc,
                     )
 
             window_results.append(wr)

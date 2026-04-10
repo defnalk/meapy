@@ -142,7 +142,7 @@ def flooding_velocity(
 
     # --- Capacity parameter at flooding (GPDC ordinate) --------------------
     ln_FLV = math.log(FLV)
-    ln_K4_flood = _C0 + _C1 * ln_FLV + _C2 * ln_FLV ** 2
+    ln_K4_flood = _C0 + _C1 * ln_FLV + _C2 * ln_FLV**2
     K4_flood = math.exp(ln_K4_flood)
 
     # --- Flooding velocity --------------------------------------------------
@@ -153,11 +153,14 @@ def flooding_velocity(
     u_flood = math.sqrt(numerator / denominator)
 
     # --- Pressure drop at flooding (Kister & Gill, 1991) -------------------
-    pressure_drop = _KG_COEFF * F_p ** 0.7
+    pressure_drop = _KG_COEFF * F_p**0.7
 
     logger.debug(
         "flooding_velocity: FLV=%.4f, K4=%.6f, u_flood=%.4f m/s, ΔP=%.1f Pa/m",
-        FLV, K4_flood, u_flood, pressure_drop,
+        FLV,
+        K4_flood,
+        u_flood,
+        pressure_drop,
     )
 
     return u_flood, K4_flood, pressure_drop

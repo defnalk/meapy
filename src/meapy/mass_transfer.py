@@ -364,13 +364,9 @@ def ntu_og(
     if m_slope < 0.0:
         raise ValueError(f"m_slope must be non-negative, got {m_slope!r}.")
     if absorption_factor_val is None:
-        raise ValueError(
-            "absorption_factor_val (A = L/(m·G)) is required when m_slope > 0."
-        )
+        raise ValueError("absorption_factor_val (A = L/(m·G)) is required when m_slope > 0.")
     if absorption_factor_val <= 0.0:
-        raise ValueError(
-            f"absorption_factor_val must be positive, got {absorption_factor_val!r}."
-        )
+        raise ValueError(f"absorption_factor_val must be positive, got {absorption_factor_val!r}.")
 
     A = absorption_factor_val
     y_in = y_bottom
@@ -394,7 +390,12 @@ def ntu_og(
 
     logger.debug(
         "ntu_og (Kremser): A=%.4f, y_in=%.4f, y_out=%.4f, m=%.4f, x_in=%.4f → NTU=%.4f",
-        A, y_in, y_out, m_slope, x_in, ntu_val,
+        A,
+        y_in,
+        y_out,
+        m_slope,
+        x_in,
+        ntu_val,
     )
     return ntu_val
 
