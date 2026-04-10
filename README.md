@@ -12,9 +12,9 @@
 ![Signed: cosign](https://img.shields.io/badge/images-signed%20with%20cosign-4B0082)
 ![IaC](https://img.shields.io/badge/IaC-Terraform-7B42BC?logo=terraform&logoColor=white)
 
-> **A scientific Python library for analysing post-combustion CO₂ capture processes based on monoethanolamine (MEA) absorption.**
+> **A scientific Python library for analysing postcombustion CO₂ capture processes based on monoethanolamine (MEA) absorption.**
 
-meapy provides a clean, tested, and typed API for the core calculations performed when commissioning and evaluating MEA-based carbon capture pilot plants , heat exchanger thermal analysis, packed-column mass transfer, and pump commissioning , styled after scientific packages like [pvlib](https://pvlib-python.readthedocs.io/) and [scipy](https://scipy.org/).
+meapy provides a clean, tested, and typed API for the core calculations performed when commissioning and evaluating MEA based carbon capture pilot plants , heat exchanger thermal analysis, packed column mass transfer, and pump commissioning , styled after scientific packages like [pvlib](https://pvlib-python.readthedocs.io/) and [scipy](https://scipy.org/).
 
 ---
 
@@ -22,15 +22,15 @@ meapy provides a clean, tested, and typed API for the core calculations performe
 
 A research library shipped with the rigour of a production service:
 
-- **Science** — LMTD/NTU heat-exchanger analysis, K_OGa packed-column profiling, and exponential pump commissioning models, all benchmarked against an Imperial College pilot plant.
-- **Quality** — `mypy --strict`, ruff lint+format, ≥ 90 % coverage gate, 124 unit tests across 8 modules, Google-style docstrings on every public symbol.
-- **Cross-platform CI** — Python 3.10/3.11/3.12 × Ubuntu/macOS test matrix, Codecov upload, every action pinned to a full SHA.
-- **Containerised** — multi-stage `Dockerfile` (non-root, healthcheck, < 150 MB), plus `Dockerfile.lambda` for AWS and `Dockerfile.cloudrun` for GCP.
-- **Supply-chain hardened** — released images are **signed with cosign (keyless OIDC)**, ship an **SPDX SBOM** as a cosign attestation, and carry SLSA build provenance.
-- **Multi-cloud IaC** — Terraform modules for **AWS Lambda (arm64 container, ECR, IAM least-priv, Function URL or API Gateway v2)** and **GCP Cloud Run (Artifact Registry, scale-to-zero)**.
-- **Keyless deploys** — GitHub Actions assumes a least-privileged AWS role via OIDC; no long-lived access keys.
-- **Static analysis** — weekly CodeQL `security-and-quality` queries, Dependabot across 4 ecosystems, CODEOWNERS gating sensitive paths.
-- **Trusted publishing** — PyPI releases via PEP 740 trusted publisher, validated through TestPyPI before promotion.
+- **Science**: LMTD/NTU heat exchanger analysis, K_OGa packed column profiling, and exponential pump commissioning models, all benchmarked against an Imperial College pilot plant.
+- **Quality**: `mypy --strict`, ruff lint+format, ≥ 90 % coverage gate, 124 unit tests across 8 modules, Google style docstrings on every public symbol.
+- **Cross platform CI**: Python 3.10/3.11/3.12 × Ubuntu/macOS test matrix, Codecov upload, every action pinned to a full SHA.
+- **Containerised**: multi stage `Dockerfile` (non root, healthcheck, < 150 MB), plus `Dockerfile.lambda` for AWS and `Dockerfile.cloudrun` for GCP.
+- **Supply chain hardened**: released images are **signed with cosign (keyless OIDC)**, ship an **SPDX SBOM** as a cosign attestation, and carry SLSA build provenance.
+- **Multi cloud IaC**: Terraform modules for **AWS Lambda (arm64 container, ECR, IAM least priv, Function URL or API Gateway v2)** and **GCP Cloud Run (Artifact Registry, scale to zero)**.
+- **Keyless deploys**: GitHub Actions assumes a least privileged AWS role via OIDC; no long lived access keys.
+- **Static analysis**: weekly CodeQL `security-and-quality` queries, Dependabot across 4 ecosystems, CODEOWNERS gating sensitive paths.
+- **Trusted publishing**: PyPI releases via PEP 740 trusted publisher, validated through TestPyPI before promotion.
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for the full release runbook and architecture diagram.
 
@@ -40,23 +40,23 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for the full release runbook and architecture
 
 | Module | What it does |
 |---|---|
-| `meapy.heat_transfer` | LMTD · overall heat transfer coefficient *U* · thermal efficiency · NTU-effectiveness for plate heat exchangers |
+| `meapy.heat_transfer` | LMTD · overall heat transfer coefficient *U* · thermal efficiency · NTU effectiveness for plate heat exchangers |
 | `meapy.mass_transfer` | K_OGa profiles · NTU_OG · H_OG · composition profiling along packed absorber columns |
-| `meapy.pump` | Exponential & linear regression commissioning models · safe operating speed · alarm-threshold checking |
-| `meapy.constants` | Curated MEA thermophysical properties (DOW, 2003) · pilot-plant geometry · alarm setpoints |
-| `meapy.utils` | Unit conversions · steady-state detection · descriptive statistics |
+| `meapy.pump` | Exponential & linear regression commissioning models · safe operating speed · alarm threshold checking |
+| `meapy.constants` | Curated MEA thermophysical properties (DOW, 2003) · pilot plant geometry · alarm setpoints |
+| `meapy.utils` | Unit conversions · steady state detection · descriptive statistics |
 
-- **100 % type-annotated** — full `mypy --strict` compliance
+- **100 % type annotated**: full `mypy --strict` compliance
 - **Google-style docstrings** on every public function and class
 - **≥ 90 % test coverage** across unit and integration suites
-- **No magic numbers** — every hard-coded value lives in `constants.py` with a source citation
+- **No magic numbers**: every hard coded value lives in `constants.py` with a source citation
 - **Logging, not print** - configure output with standard `logging`
 
 ---
 
 ##  Background
 
-meapy was developed from the Imperial College London MEA carbon-capture pilot-plant analysis (Hale, 2025). The plant operates a 15 % (w/w) MEA solution in a counter-current packed absorber (E101) and stripper (E100), with plate heat exchangers C100 (intercooler) and C200 (trim cooler), and pump J100 driving lean MEA recirculation.
+meapy was developed from the Imperial College London MEA carbon capture pilot plant analysis (Hale, 2025). The plant operates a 15 % (w/w) MEA solution in a counter current packed absorber (E101) and stripper (E100), with plate heat exchangers C100 (intercooler) and C200 (trim cooler), and pump J100 driving lean MEA recirculation.
 
 ```
         CO₂-lean N₂ out ↑
@@ -187,7 +187,7 @@ print(result)
 #   Limiting constraint   : flow
 ```
 
-### Mass Transfer — K_OGa Profile (E101 absorber)
+### Mass Transfer: K_OGa Profile (E101 absorber)
 
 ```python
 import numpy as np
@@ -249,7 +249,7 @@ print(f"Range      = [{stats['min']:.1f}, {stats['max']:.1f}] kmol/(m³·h)")
 | `ExponentialLevelModel` | Frozen dataclass: `l0`, `k`, `r_squared`; methods `predict()`, `invert()` |
 | `LinearFlowModel` | Frozen dataclass: `slope`, `intercept`, `r_squared`; methods `predict()`, `invert()` |
 | `PumpCommissioningResult` | Result dataclass with `safe_speed_pct`, `limiting_constraint`, etc. |
-| `fit_exponential_level_model(speeds, levels)` | Fit L = L₀·exp(k·PS) by log-linearisation |
+| `fit_exponential_level_model(speeds, levels)` | Fit L = L₀·exp(k·PS) by log linearisation |
 | `fit_linear_flowrate_model(speeds, flows)` | Fit F = slope·PS + intercept by OLS |
 | `safe_pump_speed(level_model, flow_model)` | Determine binding constraint and safe speed |
 
@@ -304,7 +304,7 @@ meapy/
 │   ├── heat_transfer.py     # LMTD, U, efficiency, effectiveness
 │   ├── mass_transfer.py     # K_OGa, composition profiling, NTU
 │   ├── pump.py              # Commissioning models and safe speed
-│   └── utils.py             # Unit conversions, steady-state detection
+│   └── utils.py             # Unit conversions, steady state detection
 ├── tests/
 │   ├── conftest.py          # Shared fixtures
 │   ├── unit/
@@ -347,16 +347,16 @@ meapy/
 
 | Concern | How meapy handles it |
 |---|---|
-| **Builds** | Multi-stage Dockerfile, tests run inside the builder, image < 150 MB |
+| **Builds** | Multi stage Dockerfile, tests run inside the builder, image < 150 MB |
 | **CI** | py3.10/3.11/3.12 × Ubuntu/macOS, ruff + mypy + pytest, Docker smoke + Scout CVE scan |
-| **Releases** | Tag `v*` → TestPyPI → PyPI (OIDC) → multi-arch GHCR → signed GitHub Release |
+| **Releases** | Tag `v*` → TestPyPI → PyPI (OIDC) → multi arch GHCR → signed GitHub Release |
 | **Image signing** | `cosign sign --yes` (keyless, Sigstore Fulcio/Rekor) on every released tag |
 | **SBOM** | SPDX JSON via Syft, attached as a `cosign attest --type spdxjson` predicate |
-| **AWS deploy** | Container Lambda on Graviton, ECR with 5-image retention, Function URL **or** API Gateway v2 |
-| **GCP deploy** | Cloud Run v2, Artifact Registry, scale-to-zero, public via IAM binding |
-| **Secrets** | Zero hardcoded credentials — PyPI uses OIDC, AWS uses OIDC trust role, GHCR uses `GITHUB_TOKEN` |
+| **AWS deploy** | Container Lambda on Graviton, ECR with 5 image retention, Function URL **or** API Gateway v2 |
+| **GCP deploy** | Cloud Run v2, Artifact Registry, scale to zero, public via IAM binding |
+| **Secrets** | Zero hardcoded credentials: PyPI uses OIDC, AWS uses OIDC trust role, GHCR uses `GITHUB_TOKEN` |
 | **Security scans** | CodeQL `security-and-quality`, Docker Scout (critical/high), Dependabot weekly |
-| **Branch hygiene** | CODEOWNERS for `infra/` and `.github/`; ready for branch-protection rulesets |
+| **Branch hygiene** | CODEOWNERS for `infra/` and `.github/`; ready for branch protection rulesets |
 
 Verify a published image yourself:
 
