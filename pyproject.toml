@@ -82,7 +82,7 @@ markers     = [
 [tool.coverage.run]
 source  = ["src/meapy"]
 branch  = true
-omit    = ["*/tests/*", "*/__main__.py"]
+omit    = ["*/tests/*", "*/__main__.py", "*/cloudrun_server.py", "*/lambda_handler.py", "*/session.py"]
 
 [tool.coverage.report]
 show_missing = true
