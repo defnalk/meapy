@@ -193,6 +193,41 @@ class TestNTUOG:
         with pytest.raises(ValueError):
             ntu_og(0.02, 0.14)  # y_top ≥ y_bottom
 
+    # --- Kremser / Colburn tests (issue #5) ---------------------------------
+
+    def test_kremser_differs_from_dilute(self):
+        dilute = ntu_og(0.14, 0.02, m_slope=0.0)
+        kremser = ntu_og(0.14, 0.02, m_slope=0.85, x_in=0.0, absorption_factor_val=2.0)
+        assert kremser != pytest.approx(dilute, rel=1e-3)
+
+    def test_kremser_a_infinity_limit(self):
+        """When A → ∞ and x_in = 0, NTU_OG → ln(y_in / y_out)."""
+        y_in, y_out = 0.14, 0.02
+        expected = math.log(y_in / y_out)
+        result = ntu_og(
+            y_in, y_out, m_slope=0.85, x_in=0.0, absorption_factor_val=1e12,
+        )
+        assert result == pytest.approx(expected, rel=1e-6)
+
+    def test_kremser_a_equals_one(self):
+        """A = 1 special case: NTU = (y_in - y_out) / (y_out - m*x_in)."""
+        y_in, y_out, m, x_in = 0.14, 0.02, 0.5, 0.0
+        expected = (y_in - y_out) / (y_out - m * x_in)
+        result = ntu_og(y_in, y_out, m_slope=m, x_in=x_in, absorption_factor_val=1.0)
+        assert result == pytest.approx(expected, rel=1e-6)
+
+    def test_kremser_requires_absorption_factor(self):
+        with pytest.raises(ValueError, match="absorption_factor_val"):
+            ntu_og(0.14, 0.02, m_slope=0.85)
+
+    def test_kremser_negative_m_raises(self):
+        with pytest.raises(ValueError, match="m_slope"):
+            ntu_og(0.14, 0.02, m_slope=-0.5, absorption_factor_val=2.0)
+
+    def test_kremser_nonpositive_A_raises(self):
+        with pytest.raises(ValueError):
+            ntu_og(0.14, 0.02, m_slope=0.85, absorption_factor_val=0.0)
+
 
 # ---------------------------------------------------------------------------
 # hog

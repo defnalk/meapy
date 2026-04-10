@@ -35,6 +35,7 @@ from __future__ import annotations
 import logging
 import math
 
+from meapy._validation import require_positive
 from meapy.constants import HeatExchangerParams
 
 __all__ = [
@@ -91,10 +92,8 @@ def stream_duty(
         >>> stream_duty(0.25, 3940, 85, 42)
         -42505.0
     """
-    if mass_flow_kg_s <= 0:
-        raise ValueError(f"mass_flow_kg_s must be positive, got {mass_flow_kg_s!r}.")
-    if cp_j_kg_k <= 0:
-        raise ValueError(f"cp_j_kg_k must be positive, got {cp_j_kg_k!r}.")
+    require_positive("mass_flow_kg_s", mass_flow_kg_s)
+    require_positive("cp_j_kg_k", cp_j_kg_k)
 
     duty = mass_flow_kg_s * cp_j_kg_k * (t_out_c - t_in_c)
     logger.debug(
@@ -246,10 +245,8 @@ def overall_heat_transfer_coefficient(
         >>> round(overall_heat_transfer_coefficient(42505, 23.09, 0.30), 1)
         6136.9
     """
-    if lmtd_k <= 0:
-        raise ValueError(f"lmtd_k must be positive, got {lmtd_k!r}.")
-    if area_m2 <= 0:
-        raise ValueError(f"area_m2 must be positive, got {area_m2!r}.")
+    require_positive("lmtd_k", lmtd_k)
+    require_positive("area_m2", area_m2)
 
     u = abs(q_w) / (area_m2 * lmtd_k)
     logger.debug("U = %.2f W/(m²·K)  [Q=%.2f W, A=%.4f m², LMTD=%.4f K]", u, q_w, area_m2, lmtd_k)
@@ -269,10 +266,8 @@ def heat_capacity_rate(mass_flow_kg_s: float, cp_j_kg_k: float) -> float:
     Raises:
         ValueError: If either argument is non-positive.
     """
-    if mass_flow_kg_s <= 0:
-        raise ValueError(f"mass_flow_kg_s must be positive, got {mass_flow_kg_s!r}.")
-    if cp_j_kg_k <= 0:
-        raise ValueError(f"cp_j_kg_k must be positive, got {cp_j_kg_k!r}.")
+    require_positive("mass_flow_kg_s", mass_flow_kg_s)
+    require_positive("cp_j_kg_k", cp_j_kg_k)
     return mass_flow_kg_s * cp_j_kg_k
 
 
@@ -375,9 +370,9 @@ def ntu(
     Raises:
         ValueError: If any argument is non-positive.
     """
-    for name, val in (("u_w_m2_k", u_w_m2_k), ("area_m2", area_m2), ("c_min_w_k", c_min_w_k)):
-        if val <= 0:
-            raise ValueError(f"{name} must be positive, got {val!r}.")
+    require_positive("u_w_m2_k", u_w_m2_k)
+    require_positive("area_m2", area_m2)
+    require_positive("c_min_w_k", c_min_w_k)
     return u_w_m2_k * area_m2 / c_min_w_k
 
 

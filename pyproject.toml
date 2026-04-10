@@ -49,6 +49,9 @@ dev = [
     "ruff>=0.4",
     "mypy>=1.10",
 ]
+data = [
+    "pandas>=2.0",
+]
 docs = [
     "sphinx>=7.0",
     "sphinx-rtd-theme>=2.0",

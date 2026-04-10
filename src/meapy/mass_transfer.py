@@ -34,6 +34,8 @@ from collections.abc import Sequence
 import numpy as np
 import numpy.typing as npt
 
+from meapy._validation import require_in_range, require_positive
+
 __all__ = [
     "mole_ratio_to_fraction",
     "mole_fraction_to_ratio",
@@ -72,8 +74,8 @@ def mole_fraction_to_ratio(y: float) -> float:
     """
     if not (0.0 <= y < 1.0):
         raise ValueError(
-            f"Mole fraction y must be in [0, 1), got {y!r}.  "
-            "A value ≥ 1 is not physically meaningful for a binary mixture."
+            f"Mole fraction y must be in [0, 1), got {y!r}. "
+            "A value >= 1 is not physically meaningful for a binary mixture."
         )
     return y / (1.0 - y)
 
@@ -145,15 +147,11 @@ def koga_from_flux(
         >>> round(koga_from_flux(0.012, 7.854e-3, 1.0, 0.14, 0.02), 4)
         12.3695
     """
-    if inert_gas_flow_mol_s <= 0:
-        raise ValueError(f"inert_gas_flow_mol_s must be positive, got {inert_gas_flow_mol_s!r}.")
-    if cross_section_m2 <= 0:
-        raise ValueError(f"cross_section_m2 must be positive, got {cross_section_m2!r}.")
-    if packed_height_m <= 0:
-        raise ValueError(f"packed_height_m must be positive, got {packed_height_m!r}.")
-    for name, val in (("y_bottom", y_bottom), ("y_top", y_top)):
-        if not (0.0 < val < 1.0):
-            raise ValueError(f"{name} must be in (0, 1), got {val!r}.")
+    require_positive("inert_gas_flow_mol_s", inert_gas_flow_mol_s)
+    require_positive("cross_section_m2", cross_section_m2)
+    require_positive("packed_height_m", packed_height_m)
+    require_in_range("y_bottom", y_bottom, 0.0, 1.0, lo_inclusive=False, hi_inclusive=False)
+    require_in_range("y_top", y_top, 0.0, 1.0, lo_inclusive=False, hi_inclusive=False)
     if y_top >= y_bottom:
         raise ValueError(
             f"y_top ({y_top}) must be less than y_bottom ({y_bottom}) for absorption. "
@@ -307,28 +305,48 @@ def composition_profile(
 # ---------------------------------------------------------------------------
 
 
-def ntu_og(y_bottom: float, y_top: float, m_slope: float = 0.0) -> float:
-    """Estimate the Number of Transfer Units (NTU_OG) for dilute systems.
+def ntu_og(
+    y_bottom: float,
+    y_top: float,
+    m_slope: float = 0.0,
+    x_in: float = 0.0,
+    absorption_factor_val: float | None = None,
+) -> float:
+    """Compute the Number of Transfer Units (NTU_OG) for a packed absorber.
 
-    Uses the logarithmic mean driving force approximation valid when the
-    equilibrium line is straight and the absorption factor is large:
+    When *m_slope* is zero (default), returns the dilute-system
+    approximation NTU_OG ≈ ln(Y_bottom / Y_top).
 
-    NTU_OG ≈ ln(Y_bottom / Y_top)
+    When *m_slope* > 0 and *absorption_factor_val* is given, applies the
+    Kremser/Colburn equation for an absorber with linear equilibrium
+    y* = m · x (Treybal, 1981; Coulson & Richardson Vol 2, Ch 11):
 
-    For a rigorous calculation including the equilibrium back-pressure,
-    pass the Henry's law slope *m_slope*.
+    NTU_OG = ln[(1 − 1/A)(y_in − m·x_in)/(y_out − m·x_in) + 1/A]
+             / (1 − 1/A)
+
+    where A = L / (m · G) is the absorption factor.
+
+    Special cases handled internally:
+    * A → ∞ (excess solvent, x_in = 0): NTU_OG → ln(y_in / y_out)
+    * A = 1: NTU_OG = (y_in − y_out) / (y_out − m · x_in)
 
     Args:
-        y_bottom: CO₂ mole fraction entering the absorber (bottom).
-        y_top: CO₂ mole fraction leaving the absorber (top).
-        m_slope: Henry's law slope m = y* / x (dimensionless).  Set to 0
+        y_bottom: CO₂ mole fraction entering the absorber (bottom, = y_in).
+        y_top: CO₂ mole fraction leaving the absorber (top, = y_out).
+        m_slope: Henry's law slope m = y*/x (dimensionless).  Set to 0
             (default) to neglect equilibrium back-pressure.
+        x_in: Liquid-phase mole fraction at the solvent inlet (top of
+            absorber).  Only used when *m_slope* > 0.
+        absorption_factor_val: Absorption factor A = L/(m·G).  Required
+            when *m_slope* > 0.
 
     Returns:
         Dimensionless NTU_OG.
 
     Raises:
-        ValueError: If *y_top* ≥ *y_bottom* or fractions are outside (0, 1).
+        ValueError: If *y_top* ≥ *y_bottom*, fractions are outside (0, 1),
+            *m_slope* > 0 without *absorption_factor_val*, or
+            *absorption_factor_val* ≤ 0.
     """
     for name, val in (("y_bottom", y_bottom), ("y_top", y_top)):
         if not (0.0 < val < 1.0):
@@ -336,9 +354,49 @@ def ntu_og(y_bottom: float, y_top: float, m_slope: float = 0.0) -> float:
     if y_top >= y_bottom:
         raise ValueError(f"y_top ({y_top}) must be < y_bottom ({y_bottom}) for absorption.")
 
-    Y_b = mole_fraction_to_ratio(y_bottom)
-    Y_t = mole_fraction_to_ratio(y_top)
-    return math.log(Y_b / Y_t)
+    # --- Dilute-system approximation (backward-compatible default) ----------
+    if m_slope == 0.0:
+        Y_b = mole_fraction_to_ratio(y_bottom)
+        Y_t = mole_fraction_to_ratio(y_top)
+        return math.log(Y_b / Y_t)
+
+    # --- Kremser / Colburn equation -----------------------------------------
+    if m_slope < 0.0:
+        raise ValueError(f"m_slope must be non-negative, got {m_slope!r}.")
+    if absorption_factor_val is None:
+        raise ValueError(
+            "absorption_factor_val (A = L/(m·G)) is required when m_slope > 0."
+        )
+    if absorption_factor_val <= 0.0:
+        raise ValueError(
+            f"absorption_factor_val must be positive, got {absorption_factor_val!r}."
+        )
+
+    A = absorption_factor_val
+    y_in = y_bottom
+    y_out = y_top
+    y_star_in = m_slope * x_in  # equilibrium back-pressure at solvent inlet
+
+    if y_out <= y_star_in:
+        raise ValueError(
+            f"y_out ({y_out}) must exceed m·x_in ({y_star_in}) for a feasible "
+            "driving force at the top of the absorber."
+        )
+
+    ratio = (y_in - y_star_in) / (y_out - y_star_in)
+
+    # Handle A ≈ 1 limit analytically: NTU_OG = (y_in − y_out)/(y_out − m·x_in)
+    if math.isclose(A, 1.0, rel_tol=1e-8):
+        ntu_val = (y_in - y_out) / (y_out - y_star_in)
+    else:
+        inv_A = 1.0 / A
+        ntu_val = math.log((1.0 - inv_A) * ratio + inv_A) / (1.0 - inv_A)
+
+    logger.debug(
+        "ntu_og (Kremser): A=%.4f, y_in=%.4f, y_out=%.4f, m=%.4f, x_in=%.4f → NTU=%.4f",
+        A, y_in, y_out, m_slope, x_in, ntu_val,
+    )
+    return ntu_val
 
 
 def hog(
@@ -358,12 +416,8 @@ def hog(
     Raises:
         ValueError: If either argument is non-positive.
     """
-    if koga_mol_m3_s <= 0:
-        raise ValueError(f"koga_mol_m3_s must be positive, got {koga_mol_m3_s!r}.")
-    if inert_gas_flux_mol_m2_s <= 0:
-        raise ValueError(
-            f"inert_gas_flux_mol_m2_s must be positive, got {inert_gas_flux_mol_m2_s!r}."
-        )
+    require_positive("koga_mol_m3_s", koga_mol_m3_s)
+    require_positive("inert_gas_flux_mol_m2_s", inert_gas_flux_mol_m2_s)
     return inert_gas_flux_mol_m2_s / koga_mol_m3_s
 
 
@@ -389,13 +443,9 @@ def absorption_factor(
     Raises:
         ValueError: If any argument is non-positive.
     """
-    for name, val in (
-        ("liquid_flow_mol_s", liquid_flow_mol_s),
-        ("gas_flow_mol_s", gas_flow_mol_s),
-        ("m_slope", m_slope),
-    ):
-        if val <= 0:
-            raise ValueError(f"{name} must be positive, got {val!r}.")
+    require_positive("liquid_flow_mol_s", liquid_flow_mol_s)
+    require_positive("gas_flow_mol_s", gas_flow_mol_s)
+    require_positive("m_slope", m_slope)
     a = liquid_flow_mol_s / (m_slope * gas_flow_mol_s)
     logger.debug("absorption factor A = %.4f", a)
     return a

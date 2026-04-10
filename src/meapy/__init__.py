@@ -36,7 +36,7 @@ from __future__ import annotations
 
 import logging
 
-from meapy import constants, heat_transfer, mass_transfer, pump, utils
+from meapy import column, constants, heat_transfer, mass_transfer, pump, utils
 
 __version__ = "0.1.0"
 __author__ = "Defne Nihal Ertugrul"
@@ -48,6 +48,7 @@ __all__ = [
     "__author__",
     "__email__",
     "__license__",
+    "column",
     "constants",
     "heat_transfer",
     "mass_transfer",

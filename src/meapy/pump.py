@@ -38,6 +38,7 @@ import numpy as np
 import numpy.typing as npt
 from scipy.stats import linregress
 
+from meapy._validation import require_positive, require_same_length
 from meapy.constants import AlarmLimits
 
 __all__ = [
@@ -74,8 +75,7 @@ class ExponentialLevelModel:
     r_squared: float
 
     def __post_init__(self) -> None:
-        if self.l0 <= 0:
-            raise ValueError(f"l0 must be positive, got {self.l0!r}.")
+        require_positive("l0", self.l0)
         if not (0.0 <= self.r_squared <= 1.0):
             raise ValueError(f"r_squared must be in [0, 1], got {self.r_squared!r}.")
 
@@ -234,16 +234,12 @@ def fit_exponential_level_model(
     ps = np.asarray(pump_speeds_pct, dtype=float).ravel()
     lev = np.asarray(mea_levels_pct, dtype=float).ravel()
 
-    if ps.shape != lev.shape:
-        raise ValueError(
-            f"pump_speeds_pct and mea_levels_pct must have the same length, "
-            f"got {ps.shape} vs {lev.shape}."
-        )
+    require_same_length(pump_speeds_pct=ps, mea_levels_pct=lev)
     if len(ps) < 2:
         raise ValueError("At least 2 data points are required to fit an exponential model.")
     if np.any(lev <= 0):
         raise ValueError(
-            f"All MEA level values must be strictly positive for log-linearisation.  "
+            f"All MEA level values must be strictly positive for log-linearisation. "
             f"Found {(lev <= 0).sum()} non-positive value(s)."
         )
 
@@ -277,11 +273,7 @@ def fit_linear_flowrate_model(
     ps = np.asarray(pump_speeds_pct, dtype=float).ravel()
     fl = np.asarray(flowrates_kg_h, dtype=float).ravel()
 
-    if ps.shape != fl.shape:
-        raise ValueError(
-            f"pump_speeds_pct and flowrates_kg_h must have the same length, "
-            f"got {ps.shape} vs {fl.shape}."
-        )
+    require_same_length(pump_speeds_pct=ps, flowrates_kg_h=fl)
     if len(ps) < 2:
         raise ValueError("At least 2 data points are required to fit a linear model.")
 

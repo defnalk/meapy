@@ -19,8 +19,11 @@ from collections.abc import Sequence
 import numpy as np
 import numpy.typing as npt
 
+from meapy._validation import require_non_negative, require_positive
+
 __all__ = [
     "steady_state_mean",
+    "steady_state",
     "kg_h_to_mol_s",
     "mol_s_to_kg_h",
     "celsius_to_kelvin",
@@ -84,6 +87,67 @@ def steady_state_mean(
     return mean
 
 
+def steady_state(
+    values: npt.ArrayLike,
+    window: int = 30,
+    tol: float = 1.0,
+) -> list[tuple[int, int]]:
+    """Identify contiguous steady-state windows in a time-series.
+
+    Slides a window of length *window* across *values* and marks each
+    position as steady if the peak-to-peak variation within the window
+    is ≤ *tol*.  Adjacent steady positions are merged into contiguous
+    ``(start, end)`` index ranges (inclusive on both ends).
+
+    Args:
+        values: 1-D numeric time-series.
+        window: Number of consecutive samples in the sliding window.
+        tol: Maximum allowable peak-to-peak variation within a window.
+
+    Returns:
+        List of ``(start_index, end_index)`` tuples for each contiguous
+        steady-state region.  Empty list if no region qualifies.
+
+    Raises:
+        ValueError: If *window* < 1, *tol* < 0, or *values* is shorter
+            than *window*.
+    """
+    if window < 1:
+        raise ValueError(f"window must be ≥ 1, got {window!r}.")
+    if tol < 0:
+        raise ValueError(f"tol must be non-negative, got {tol!r}.")
+    a = np.asarray(values, dtype=float).ravel()
+    if a.size < window:
+        raise ValueError(
+            f"Need at least {window} values, got {a.size}."
+        )
+
+    # Mark each position i as steady if max-min in [i, i+window) ≤ tol
+    n = a.size
+    is_steady = np.zeros(n, dtype=bool)
+    for i in range(n - window + 1):
+        chunk = a[i : i + window]
+        if chunk.max() - chunk.min() <= tol:
+            is_steady[i : i + window] = True
+
+    # Merge into contiguous ranges
+    regions: list[tuple[int, int]] = []
+    in_region = False
+    start = 0
+    for i in range(n):
+        if is_steady[i] and not in_region:
+            start = i
+            in_region = True
+        elif not is_steady[i] and in_region:
+            regions.append((start, i - 1))
+            in_region = False
+    if in_region:
+        regions.append((start, n - 1))
+
+    logger.debug("steady_state: found %d region(s) in %d samples", len(regions), n)
+    return regions
+
+
 def kg_h_to_mol_s(
     flow_kg_h: float,
     molar_mass_g_mol: float,
@@ -105,10 +169,8 @@ def kg_h_to_mol_s(
         >>> round(kg_h_to_mol_s(44.01, 44.01), 6)
         0.277778
     """
-    if flow_kg_h < 0:
-        raise ValueError(f"flow_kg_h must be non-negative, got {flow_kg_h!r}.")
-    if molar_mass_g_mol <= 0:
-        raise ValueError(f"molar_mass_g_mol must be positive, got {molar_mass_g_mol!r}.")
+    require_non_negative("flow_kg_h", flow_kg_h)
+    require_positive("molar_mass_g_mol", molar_mass_g_mol)
     return flow_kg_h * 1_000.0 / (molar_mass_g_mol * 3_600.0)
 
 
@@ -128,10 +190,8 @@ def mol_s_to_kg_h(
     Raises:
         ValueError: If *flow_mol_s* is negative or *molar_mass_g_mol* ≤ 0.
     """
-    if flow_mol_s < 0:
-        raise ValueError(f"flow_mol_s must be non-negative, got {flow_mol_s!r}.")
-    if molar_mass_g_mol <= 0:
-        raise ValueError(f"molar_mass_g_mol must be positive, got {molar_mass_g_mol!r}.")
+    require_non_negative("flow_mol_s", flow_mol_s)
+    require_positive("molar_mass_g_mol", molar_mass_g_mol)
     return flow_mol_s * molar_mass_g_mol * 3_600.0 / 1_000.0
 
 
