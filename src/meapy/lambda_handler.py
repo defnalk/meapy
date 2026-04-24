@@ -64,6 +64,10 @@ def _analyse(body: JsonDict) -> JsonDict:
         result = heat_transfer.analyse_exchanger(**body)
     except TypeError as exc:
         return _response(400, {"error": f"bad payload: {exc}"})
+    except ValueError as exc:
+        # Physical/domain validation errors (e.g. non-positive flows, LMTD
+        # crossover) are caller-fixable inputs, not server faults.
+        return _response(400, {"error": f"invalid inputs: {exc}"})
     return _response(200, {"result": result})
 
 
